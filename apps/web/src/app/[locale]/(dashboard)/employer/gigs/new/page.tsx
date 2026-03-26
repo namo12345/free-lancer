@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GigCategory, ExperienceLevel } from "@baseedwork/shared";
+import { GigCategory, ExperienceLevel } from "@hiresense/shared";
 
 export default function PostGigPage() {
   const t = useTranslations("gigs");

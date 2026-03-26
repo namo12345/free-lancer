@@ -1,5 +1,5 @@
 {
-  "extends": "@baseedwork/config/typescript/base.json",
+  "extends": "@hiresense/config/typescript/base.json",
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",

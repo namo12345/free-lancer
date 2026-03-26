@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BaseedWork - India's AI-Powered Freelancing Platform",
+  title: "HireSense - India's AI-Powered Freelancing Platform",
   description:
-    "Find the perfect freelancer or gig with AI-powered matchmaking. BaseedWork connects India's top talent with employers.",
+    "Find the perfect freelancer or gig with AI-powered matchmaking. HireSense connects India's top talent with employers.",
 };
 
 export default function RootLayout({

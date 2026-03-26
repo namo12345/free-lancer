@@ -1,5 +1,5 @@
 {
-  "name": "@baseedwork/config",
+  "name": "@hiresense/config",
   "version": "0.0.0",
   "private": true,
   "files": ["eslint", "typescript", "tailwind"]

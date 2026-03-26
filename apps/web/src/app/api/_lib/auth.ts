@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { NextRequest } from "next/server";
 
 function getSupabaseAdmin() {

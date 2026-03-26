@@ -1,5 +1,5 @@
 {
-  "name": "@baseedwork/api",
+  "name": "@hiresense/api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,8 +10,8 @@
     "typecheck": "echo 'skip'"
   },
   "dependencies": {
-    "@baseedwork/db": "workspace:*",
-    "@baseedwork/shared": "workspace:*",
+    "@hiresense/db": "workspace:*",
+    "@hiresense/shared": "workspace:*",
     "@supabase/supabase-js": "^2.99.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.0",

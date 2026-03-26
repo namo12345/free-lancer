@@ -124,7 +124,7 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">Why BaseedWork?</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">Why HireSense?</h2>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Built for Indian freelancers and businesses. No hidden fees, no middlemen — just pure talent matching.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gradient-to-br from-brand-50 to-blue-50 rounded-xl p-6 border border-brand-100">
@@ -174,7 +174,7 @@ export default function HomePage() {
       <section className="py-16 bg-gradient-to-r from-brand-600 to-blue-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Available in 5 Languages</h2>
-          <p className="text-brand-100 mb-8 max-w-xl mx-auto">Use BaseedWork in your preferred language — English, Hindi, Tamil, Telugu, or Bengali.</p>
+          <p className="text-brand-100 mb-8 max-w-xl mx-auto">Use HireSense in your preferred language — English, Hindi, Tamil, Telugu, or Bengali.</p>
           <div className="flex flex-wrap justify-center gap-3">
             {["English", "हिन्दी", "தமிழ்", "తెలుగు", "বাংলা"].map((lang) => (
               <span key={lang} className="px-4 py-2 bg-white/15 backdrop-blur-sm text-white rounded-full text-sm font-medium border border-white/20">
@@ -189,7 +189,7 @@ export default function HomePage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
-          <p className="text-gray-600 mb-8">Join thousands of Indian freelancers and businesses already using BaseedWork. It&apos;s completely free.</p>
+          <p className="text-gray-600 mb-8">Join thousands of Indian freelancers and businesses already using HireSense. It&apos;s completely free.</p>
           <div className="flex items-center justify-center gap-4">
             <Link
               href="/signup"

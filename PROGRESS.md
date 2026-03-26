@@ -1,4 +1,4 @@
-# BaseedWork - Progress Tracker
+# HireSense - Progress Tracker
 
 ## Project Stats
 - **160+ source files** - single Next.js server (merged Express API + Python AI services)
@@ -47,7 +47,7 @@
 - FastAPI routers (search + matching endpoints)
 
 ### Step 6: Invoice & Milestone System
-- Invoice PDF generator (@react-pdf/renderer) with BaseedWork branding
+- Invoice PDF generator (@react-pdf/renderer) with HireSense branding
 - Milestone workflow (submit deliverable -> employer approves)
 - Employer + freelancer invoice pages
 - Express API: 4 route files (gigs, bids, invoices, milestones) with 15+ endpoints
@@ -105,7 +105,7 @@
 - **Fixed all empty pages** - gig detail, portfolio, reviews, messages redirects, disputes
 - **Fixed all build errors** - SpeechRecognition types, Zod validators, Supabase cookie types
 - **Single-server deployment** - everything deploys to Vercel (no Render.com needed)
-- **Build passes** - `pnpm --filter @baseedwork/web build` succeeds
+- **Build passes** - `pnpm --filter @hiresense/web build` succeeds
 
 ---
 

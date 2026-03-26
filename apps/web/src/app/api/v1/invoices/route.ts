@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { getAuthUser, jsonError } from "../../_lib/auth";
 
 const PLATFORM_FEE_PERCENT = 10;

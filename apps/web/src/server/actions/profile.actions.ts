@@ -1,9 +1,9 @@
 "use server";
 
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { createClient } from "@/lib/supabase/server";
-import { updateFreelancerProfileSchema, updateEmployerProfileSchema } from "@baseedwork/shared";
-import type { UpdateFreelancerProfileInput, UpdateEmployerProfileInput } from "@baseedwork/shared";
+import { updateFreelancerProfileSchema, updateEmployerProfileSchema } from "@hiresense/shared";
+import type { UpdateFreelancerProfileInput, UpdateEmployerProfileInput } from "@hiresense/shared";
 
 export async function createUserRecord(role: "FREELANCER" | "EMPLOYER") {
   const supabase = await createClient();

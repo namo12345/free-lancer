@@ -1,4 +1,4 @@
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ gigId: string }> }) {
   const { gigId } = await params;

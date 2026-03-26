@@ -13,8 +13,8 @@ export async function chatCompletion(
     headers: {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://baseedwork.com",
-      "X-Title": "BaseedWork",
+      "HTTP-Referer": "https://hiresense.com",
+      "X-Title": "HireSense",
     },
     body: JSON.stringify({
       model,

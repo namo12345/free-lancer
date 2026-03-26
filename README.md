@@ -1,4 +1,4 @@
-# BaseedWork
+# HireSense
 
 AI-powered freelancing platform built for India. Connects employers with skilled freelancers using semantic AI matchmaking, verified portfolios, and multilingual support.
 
@@ -30,7 +30,7 @@ pnpm dev
 ## Project Structure
 
 ```
-baseedwork/
+hiresense/
 ├── apps/
 │   ├── web/          # Next.js frontend
 │   ├── api/          # Node.js API server

@@ -1,8 +1,8 @@
 "use server";
 
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { createClient } from "@/lib/supabase/server";
-import { createGigSchema, type CreateGigInput } from "@baseedwork/shared";
+import { createGigSchema, type CreateGigInput } from "@hiresense/shared";
 
 export async function createGig(input: CreateGigInput) {
   const supabase = await createClient();

@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getConversations() {

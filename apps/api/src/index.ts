@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Health check
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "baseedwork-api" });
+  res.json({ status: "ok", service: "hiresense-api" });
 });
 
 // Routes
@@ -29,7 +29,7 @@ app.use("/api/v1/invoices", invoiceRoutes);
 app.use("/api/v1/milestones", milestoneRoutes);
 
 app.listen(PORT, () => {
-  console.log(`BaseedWork API running on port ${PORT}`);
+  console.log(`HireSense API running on port ${PORT}`);
 });
 
 export default app;

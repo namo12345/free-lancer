@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "BaseedWork",
+    "appName": "HireSense",
     "tagline": "India's AI-Powered Freelancing Platform",
     "login": "Log In",
     "signup": "Sign Up",
@@ -47,7 +47,7 @@
   },
   "onboarding": {
     "title": "Let's Get You Started",
-    "roleQuestion": "How do you want to use BaseedWork?",
+    "roleQuestion": "How do you want to use HireSense?",
     "freelancer": "I'm a Freelancer",
     "freelancerDesc": "I want to find work and get paid for my skills",
     "employer": "I'm an Employer",

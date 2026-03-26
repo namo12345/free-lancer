@@ -1,6 +1,6 @@
 export * from "./enums";
 
-export const PLATFORM_NAME = "BaseedWork";
+export const PLATFORM_NAME = "HireSense";
 export const PLATFORM_FEE_PERCENT = 10;
 export const GST_PERCENT = 18;
 export const DEFAULT_CURRENCY = "INR";

@@ -1,4 +1,4 @@
-# BaseedWork - AI-Powered Indian Freelancing Platform (Cost-Free Edition)
+# HireSense - AI-Powered Indian Freelancing Platform (Cost-Free Edition)
 
 ## Context
 
@@ -46,7 +46,7 @@ Brand new AI-powered freelancing platform for India. Differentiates from Upwork/
 ## Monorepo Structure
 
 ```
-baseedwork/
+hiresense/
 ├── turbo.json
 ├── package.json
 ├── pnpm-workspace.yaml
@@ -218,7 +218,7 @@ POST /ai/v1/pricing/suggest         # Rule-based pricing suggestion
 ### How It Works
 1. Employer accepts bid -> system creates **Invoice** with milestones as line items
 2. Invoice PDF generated via `@react-pdf/renderer` with:
-   - BaseedWork branding + invoice number
+   - HireSense branding + invoice number
    - Freelancer details (name, contact)
    - Employer details (name, company)
    - Line items (milestones with amounts)
@@ -232,7 +232,7 @@ POST /ai/v1/pricing/suggest         # Rule-based pricing suggestion
 ### Invoice PDF Template
 ```
 ┌─────────────────────────────────────────┐
-│  BASEEDWORK                  INVOICE    │
+│  HIRESENSE                  INVOICE    │
 │  ─────────────────────────────────────  │
 │  Invoice #: BW-2026-0001               │
 │  Date: March 15, 2026                  │
@@ -273,9 +273,9 @@ POST /ai/v1/pricing/suggest         # Rule-based pricing suggestion
 6. Create Supabase project (free tier) + get connection strings
 
 **Critical files**:
-- `baseedwork/turbo.json`
-- `baseedwork/package.json` + `pnpm-workspace.yaml`
-- `baseedwork/.env.example`:
+- `hiresense/turbo.json`
+- `hiresense/package.json` + `pnpm-workspace.yaml`
+- `hiresense/.env.example`:
   ```
   NEXT_PUBLIC_SUPABASE_URL=
   NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -362,7 +362,7 @@ POST /ai/v1/pricing/suggest         # Rule-based pricing suggestion
 ### Step 6: Invoice & Milestone System (Day 24-30)
 1. Accept bid -> create Invoice with milestones as line items
 2. Invoice model: auto-generated number (BW-YYYY-NNNN), line items, fees, totals
-3. PDF generation with `@react-pdf/renderer` (BaseedWork branded template)
+3. PDF generation with `@react-pdf/renderer` (HireSense branded template)
 4. Invoice download endpoint
 5. Milestone workflow: Freelancer submits deliverable (Supabase Storage upload) -> Employer reviews -> Approve
 6. Employer marks invoice as "Paid" (manual, after offline UPI/bank payment)

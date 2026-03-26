@@ -1,5 +1,5 @@
 import { Router, Response } from "express";
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { AuthRequest, authMiddleware } from "../middleware/auth";
 
 const PLATFORM_FEE_PERCENT = 10;

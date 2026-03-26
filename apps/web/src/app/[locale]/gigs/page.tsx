@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate, truncate } from "@/lib/utils";
-import { GigCategory } from "@baseedwork/shared";
+import { GigCategory } from "@hiresense/shared";
 
 // Mock data - in production fetched from DB
 const mockGigs = [

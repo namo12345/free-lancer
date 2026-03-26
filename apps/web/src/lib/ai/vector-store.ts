@@ -1,4 +1,4 @@
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 
 export async function searchFreelancers(params: {
   queryEmbedding: number[];

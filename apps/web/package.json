@@ -1,5 +1,5 @@
 {
-  "name": "@baseedwork/web",
+  "name": "@hiresense/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@baseedwork/db": "workspace:*",
-    "@baseedwork/shared": "workspace:*",
-    "@baseedwork/ui": "workspace:*",
+    "@hiresense/db": "workspace:*",
+    "@hiresense/shared": "workspace:*",
+    "@hiresense/ui": "workspace:*",
     "@react-pdf/renderer": "^4.3.2",
     "@supabase/ssr": "^0.5.0",
     "@supabase/supabase-js": "^2.45.0",

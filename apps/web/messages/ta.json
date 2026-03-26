@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "BaseedWork",
+    "appName": "HireSense",
     "tagline": "இந்தியாவின் AI-இயங்கும் ஃப்ரீலான்சிங் தளம்",
     "login": "உள்நுழை",
     "signup": "பதிவு செய்",
@@ -34,7 +34,7 @@
   },
   "onboarding": {
     "title": "தொடங்குவோம்",
-    "roleQuestion": "BaseedWork-ஐ எப்படி பயன்படுத்த விரும்புகிறீர்கள்?",
+    "roleQuestion": "HireSense-ஐ எப்படி பயன்படுத்த விரும்புகிறீர்கள்?",
     "freelancer": "நான் ஃப்ரீலான்சர்",
     "freelancerDesc": "நான் வேலை கண்டுபிடித்து என் திறமைக்கு ஊதியம் பெற விரும்புகிறேன்",
     "employer": "நான் முதலாளி",

@@ -13,7 +13,7 @@ interface ReferralCardProps {
 
 export function ReferralCard({ referralCode, referralCount, creditsEarned }: ReferralCardProps) {
   const [copied, setCopied] = useState(false);
-  const referralLink = `https://baseedwork.com/signup?ref=${referralCode}`;
+  const referralLink = `https://hiresense.com/signup?ref=${referralCode}`;
 
   function copyLink() {
     navigator.clipboard.writeText(referralLink);
@@ -50,13 +50,13 @@ export function ReferralCard({ referralCode, referralCount, creditsEarned }: Ref
 
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="flex-1" onClick={() => {
-            const text = `Join BaseedWork - India's AI-powered freelancing platform! Sign up with my link: ${referralLink}`;
+            const text = `Join HireSense - India's AI-powered freelancing platform! Sign up with my link: ${referralLink}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
           }}>
             Share on WhatsApp
           </Button>
           <Button variant="outline" size="sm" className="flex-1" onClick={() => {
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Join @BaseedWork - India's AI freelancing platform! ${referralLink}`)}`, "_blank");
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Join @HireSense - India's AI freelancing platform! ${referralLink}`)}`, "_blank");
           }}>
             Share on X
           </Button>

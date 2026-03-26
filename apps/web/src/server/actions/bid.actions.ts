@@ -1,8 +1,8 @@
 "use server";
 
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { createClient } from "@/lib/supabase/server";
-import { createBidSchema, type CreateBidInput } from "@baseedwork/shared";
+import { createBidSchema, type CreateBidInput } from "@hiresense/shared";
 
 export async function submitBid(input: CreateBidInput) {
   const supabase = await createClient();

@@ -15,7 +15,7 @@ export default async function DashboardLayout({
         displayName: authUser.user_metadata?.display_name || authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "User",
         avatarUrl: authUser.user_metadata?.avatar_url,
       }
-    : { email: "guest@baseedwork.com", displayName: "Guest User" };
+    : { email: "guest@hiresense.com", displayName: "Guest User" };
 
   return (
     <div className="min-h-screen bg-gray-50">

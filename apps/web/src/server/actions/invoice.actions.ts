@@ -1,9 +1,9 @@
 "use server";
 
-import { prisma } from "@baseedwork/db";
+import { prisma } from "@hiresense/db";
 import { createClient } from "@/lib/supabase/server";
 import { generateInvoiceNumber } from "@/lib/utils";
-import { PLATFORM_FEE_PERCENT, GST_PERCENT } from "@baseedwork/shared";
+import { PLATFORM_FEE_PERCENT, GST_PERCENT } from "@hiresense/shared";
 
 export async function createInvoice(gigId: string, milestones: { title: string; amount: number }[]) {
   const supabase = await createClient();
