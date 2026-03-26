@@ -1,16 +1,25 @@
 import { Navbar } from "@/components/layout/navbar";
+import { createClient } from "@/lib/supabase/server";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // In production, fetch user from Supabase session
-  const mockUser = { email: "user@example.com", displayName: "Demo User" };
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  const user = authUser
+    ? {
+        email: authUser.email || "",
+        displayName: authUser.user_metadata?.display_name || authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "User",
+        avatarUrl: authUser.user_metadata?.avatar_url,
+      }
+    : { email: "guest@baseedwork.com", displayName: "Guest User" };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar user={mockUser} />
+      <Navbar user={user} />
       <div className="flex">
         {children}
       </div>

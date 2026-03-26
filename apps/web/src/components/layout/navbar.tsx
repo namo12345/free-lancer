@@ -13,6 +13,11 @@ interface NavbarProps {
 export function Navbar({ user }: NavbarProps) {
   const t = useTranslations("common");
 
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/";
+  }
+
   return (
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,6 +42,9 @@ export function Navbar({ user }: NavbarProps) {
                   fallback={user.displayName || user.email}
                   size="sm"
                 />
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                  Logout
+                </Button>
               </>
             ) : (
               <>
