@@ -112,9 +112,9 @@ export default function GigDetailPage({
                 </div>
                 <h1 className="text-2xl font-bold mb-2">{mockGig.title}</h1>
                 <p className="text-sm text-gray-500 mb-4">
-                  Posted {formatDate(mockGig.createdAt)} &middot;{" "}
+                  Posted {formatDate(mockGig.createdAt)} ·{" "}
                   {mockGig.isRemote ? "Remote" : mockGig.city || mockGig.category}{" "}
-                  &middot; {mockGig.experienceLevel}
+                  · {mockGig.experienceLevel}
                 </p>
 
                 <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
@@ -164,7 +164,7 @@ export default function GigDetailPage({
                             {bid.freelancer.displayName}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {bid.freelancer.avgRating} rating &middot;{" "}
+                            {bid.freelancer.avgRating} rating ·{" "}
                             {bid.freelancer.completedGigs} gigs done
                           </div>
                         </div>
@@ -329,7 +329,7 @@ export default function GigDetailPage({
                       {mockGig.poster.displayName}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {mockGig.poster.avgRating} rating &middot;{" "}
+                      {mockGig.poster.avgRating} rating ·{" "}
                       {mockGig.poster.gigsPosted} gigs posted
                     </div>
                   </div>

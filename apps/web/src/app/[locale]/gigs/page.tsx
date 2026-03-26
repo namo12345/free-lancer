@@ -104,9 +104,9 @@ export default function BrowseGigsPage() {
                     <div className="flex-1">
                       <h2 className="text-lg font-semibold text-gray-900 hover:text-brand-600">{gig.title}</h2>
                       <p className="text-sm text-gray-500 mt-1">
-                        Posted by {gig.poster.displayName} &middot; {formatDate(gig.createdAt)}
-                        {gig.isRemote && " &middot; Remote"}
-                        {gig.city && ` &middot; ${gig.city}`}
+                        Posted by {gig.poster.displayName} · {formatDate(gig.createdAt)}
+                        {gig.isRemote && " · Remote"}
+                        {gig.city && ` · ${gig.city}`}
                       </p>
                       <p className="text-sm text-gray-600 mt-2">{truncate(gig.description, 200)}</p>
                       <div className="flex flex-wrap gap-1.5 mt-3">

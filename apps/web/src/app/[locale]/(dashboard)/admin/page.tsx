@@ -4,7 +4,6 @@ import { StatsCard } from "@/components/analytics/stats-card";
 import { BarChart } from "@/components/analytics/bar-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Navbar } from "@/components/layout/navbar";
 import { formatCurrency } from "@/lib/utils";
 
 const gmvData = [
@@ -42,8 +41,7 @@ const typeColors: Record<string, string> = {
 
 export default function AdminDashboardPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar user={{ email: "admin@baseedwork.com", displayName: "Admin" }} />
+    <div className="flex-1">
       <main className="max-w-7xl mx-auto p-6 space-y-6">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
