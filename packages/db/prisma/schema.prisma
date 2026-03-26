@@ -1,0 +1,510 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [vector]
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  FREELANCER
+  EMPLOYER
+  ADMIN
+}
+
+enum GigStatus {
+  DRAFT
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  SUBMITTED
+  APPROVED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum Language {
+  EN
+  HI
+  TA
+  TE
+  BN
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model User {
+  id            String   @id @default(cuid())
+  supabaseId    String   @unique
+  email         String   @unique
+  phone         String?  @unique
+  role          UserRole
+  preferredLang Language @default(EN)
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  freelancerProfile FreelancerProfile?
+  employerProfile   EmployerProfile?
+  gigsPosted        Gig[]              @relation("GigPoster")
+  bids              Bid[]
+  sentMessages      Message[]          @relation("MessageSender")
+  receivedMessages  Message[]          @relation("MessageReceiver")
+  reviewsAuthored   Review[]           @relation("ReviewAuthor")
+  reviewsReceived   Review[]           @relation("ReviewTarget")
+  notifications     Notification[]
+
+  @@index([supabaseId])
+  @@index([role])
+}
+
+model FreelancerProfile {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName String
+  headline    String?
+  bio         String? @db.Text
+  avatarUrl   String?
+
+  hourlyRate Decimal? @db.Decimal(10, 2)
+  currency   String   @default("INR")
+
+  city      String?
+  state     String?
+  latitude  Float?
+  longitude Float?
+  isRemote  Boolean @default(true)
+
+  // External links
+  githubUrl   String?
+  behanceUrl  String?
+  dribbbleUrl String?
+  linkedinUrl String?
+
+  // Payment details (for invoices)
+  upiId             String?
+  bankAccountNumber String?
+  bankIfsc          String?
+  bankName          String?
+
+  // Verification
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+
+  // AI-generated tags
+  aiPersonalityTags String[]
+  aiSkillScore      Float?
+
+  // Aggregates (denormalized)
+  totalEarnings Decimal @default(0) @db.Decimal(12, 2)
+  completedGigs Int     @default(0)
+  avgRating     Float   @default(0)
+  responseTime  Int?
+
+  skills         FreelancerSkill[]
+  portfolioItems PortfolioItem[]
+  badges         SkillBadge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([city, state])
+  @@index([avgRating])
+}
+
+model EmployerProfile {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName String?
+  displayName String
+  bio         String? @db.Text
+  avatarUrl   String?
+  website     String?
+  industry    String?
+  city        String?
+  state       String?
+
+  totalSpent Decimal @default(0) @db.Decimal(12, 2)
+  gigsPosted Int     @default(0)
+  avgRating  Float   @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// SKILLS & PORTFOLIO
+// ============================================
+
+model Skill {
+  id       String @id @default(cuid())
+  name     String @unique
+  slug     String @unique
+  category String
+
+  freelancerSkills FreelancerSkill[]
+  gigSkills        GigSkill[]
+
+  @@index([category])
+  @@index([slug])
+}
+
+model FreelancerSkill {
+  id           String @id @default(cuid())
+  freelancerId String
+  skillId      String
+  yearsExp     Int?
+  proficiency  Int?
+
+  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  skill      Skill             @relation(fields: [skillId], references: [id])
+
+  @@unique([freelancerId, skillId])
+}
+
+model SkillBadge {
+  id           String    @id @default(cuid())
+  freelancerId String
+  skillName    String
+  badgeType    String
+  score        Float?
+  issuedAt     DateTime  @default(now())
+  expiresAt    DateTime?
+
+  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+
+  @@index([freelancerId])
+}
+
+model PortfolioItem {
+  id           String  @id @default(cuid())
+  freelancerId String
+  title        String
+  description  String? @db.Text
+  thumbnailUrl String?
+  projectUrl   String?
+  source       String
+  sourceId     String?
+  metadata     Json?
+
+  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime          @default(now())
+
+  @@index([freelancerId])
+}
+
+// ============================================
+// GIGS & BIDS
+// ============================================
+
+model Gig {
+  id          String @id @default(cuid())
+  posterId    String
+  poster      User   @relation("GigPoster", fields: [posterId], references: [id])
+  title       String
+  description String @db.Text
+  category    String
+  subcategory String?
+
+  budgetMin Decimal @db.Decimal(10, 2)
+  budgetMax Decimal @db.Decimal(10, 2)
+  currency  String  @default("INR")
+  budgetType String @default("fixed")
+
+  deadline        DateTime?
+  duration        String?
+  experienceLevel String?
+
+  city      String?
+  state     String?
+  latitude  Float?
+  longitude Float?
+  isRemote  Boolean @default(true)
+
+  status          GigStatus @default(DRAFT)
+  aiSuggestedPrice Decimal?  @db.Decimal(10, 2)
+
+  viewCount Int @default(0)
+  bidCount  Int @default(0)
+
+  skills      GigSkill[]
+  bids        Bid[]
+  milestones  Milestone[]
+  invoices    Invoice[]
+  attachments GigAttachment[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  @@index([status])
+  @@index([category])
+  @@index([posterId])
+  @@index([createdAt])
+}
+
+model GigSkill {
+  id      String @id @default(cuid())
+  gigId   String
+  skillId String
+
+  gig   Gig   @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id])
+
+  @@unique([gigId, skillId])
+}
+
+model GigAttachment {
+  id       String @id @default(cuid())
+  gigId    String
+  fileName String
+  fileUrl  String
+  fileSize Int
+  mimeType String
+
+  gig Gig @relation(fields: [gigId], references: [id], onDelete: Cascade)
+}
+
+model Bid {
+  id           String @id @default(cuid())
+  gigId        String
+  freelancerId String
+  amount       Decimal   @db.Decimal(10, 2)
+  currency     String    @default("INR")
+  deliveryDays Int
+  coverLetter  String    @db.Text
+  status       BidStatus @default(PENDING)
+
+  // AI-generated
+  matchScore  Float?
+  aiRationale String?
+
+  gig        Gig  @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  freelancer User @relation(fields: [freelancerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gigId, freelancerId])
+  @@index([gigId, status])
+  @@index([freelancerId])
+}
+
+// ============================================
+// MILESTONES & INVOICES
+// ============================================
+
+model Milestone {
+  id          String          @id @default(cuid())
+  gigId       String
+  title       String
+  description String?
+  amount      Decimal         @db.Decimal(10, 2)
+  orderIndex  Int
+  status      MilestoneStatus @default(PENDING)
+
+  submittedAt DateTime?
+  approvedAt  DateTime?
+
+  gig          Gig                    @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  deliverables MilestoneDeliverable[]
+  invoiceItems InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gigId, orderIndex])
+}
+
+model MilestoneDeliverable {
+  id          String @id @default(cuid())
+  milestoneId String
+  fileName    String
+  fileUrl     String
+  fileSize    Int
+  note        String?
+
+  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  gigId         String
+  employerId    String
+  freelancerId  String
+  subtotal      Decimal       @db.Decimal(12, 2)
+  platformFee   Decimal       @db.Decimal(10, 2)
+  gst           Decimal       @db.Decimal(10, 2)
+  totalAmount   Decimal       @db.Decimal(12, 2)
+  currency      String        @default("INR")
+  status        InvoiceStatus @default(DRAFT)
+  dueDate       DateTime
+  paidAt        DateTime?
+  notes         String?
+
+  gig   Gig           @relation(fields: [gigId], references: [id])
+  items InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([employerId])
+  @@index([freelancerId])
+  @@index([status])
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  milestoneId String?
+  description String
+  quantity    Int     @default(1)
+  rate        Decimal @db.Decimal(10, 2)
+  amount      Decimal @db.Decimal(10, 2)
+
+  invoice   Invoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id])
+}
+
+// ============================================
+// REVIEWS & MESSAGING
+// ============================================
+
+model Review {
+  id       String @id @default(cuid())
+  authorId String
+  targetId String
+  gigId    String
+  rating   Int
+
+  communicationRating Int?
+  qualityRating       Int?
+  timelinessRating    Int?
+  valueRating         Int?
+
+  comment  String? @db.Text
+  isPublic Boolean @default(true)
+
+  author User @relation("ReviewAuthor", fields: [authorId], references: [id])
+  target User @relation("ReviewTarget", fields: [targetId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([authorId, gigId])
+  @@index([targetId])
+}
+
+model Conversation {
+  id             String    @id @default(cuid())
+  participantIds String[]
+  gigId          String?
+  lastMessageAt  DateTime?
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+
+  @@index([lastMessageAt])
+}
+
+model Message {
+  id             String  @id @default(cuid())
+  conversationId String
+  senderId       String
+  receiverId     String
+  content        String  @db.Text
+  attachmentUrl  String?
+  isRead         Boolean @default(false)
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("MessageSender", fields: [senderId], references: [id])
+  receiver     User         @relation("MessageReceiver", fields: [receiverId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+  @@index([receiverId, isRead])
+}
+
+model Notification {
+  id     String  @id @default(cuid())
+  userId String
+  type   String
+  title  String
+  body   String
+  data   Json?
+  isRead Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead, createdAt])
+}
+
+// ============================================
+// AI-SPECIFIC
+// ============================================
+
+model FreelancerDna {
+  id           String   @id @default(cuid())
+  freelancerId String   @unique
+  hardSkills   Json
+  softSkills   String[]
+  workPatterns Json?
+  qualityScore Float?
+  aiSummary    String?  @db.Text
+  contentHash  String?
+
+  lastAnalyzedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model SkillDemand {
+  id           String   @id @default(cuid())
+  skill        String   @unique
+  demandScore  Float
+  jobCount30d  Int      @default(0)
+  avgRateInr   Int?
+  growthRate   Float?
+  updatedAt    DateTime @updatedAt
+}

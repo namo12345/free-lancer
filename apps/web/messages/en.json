@@ -1,0 +1,104 @@
+{
+  "common": {
+    "appName": "BaseedWork",
+    "tagline": "India's AI-Powered Freelancing Platform",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "noResults": "No results found"
+  },
+  "landing": {
+    "hero": {
+      "title": "Find the Perfect Freelancer for Your Project",
+      "subtitle": "AI-powered matchmaking connects you with India's top talent. Post a gig, get matched, and pay securely.",
+      "ctaEmployer": "Post a Gig",
+      "ctaFreelancer": "Find Work"
+    },
+    "features": {
+      "aiMatching": "AI-Powered Matching",
+      "aiMatchingDesc": "Our AI understands what you need and finds the perfect freelancer match.",
+      "securePayments": "Secure Invoicing",
+      "securePaymentsDesc": "Professional invoices with milestone tracking for every project.",
+      "verifiedTalent": "Verified Talent",
+      "verifiedTalentDesc": "Portfolios synced from GitHub, Behance, and Dribbble."
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome Back",
+    "signupTitle": "Create Your Account",
+    "email": "Email",
+    "phone": "Phone Number",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "orContinueWith": "Or continue with",
+    "google": "Google",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "onboarding": {
+    "title": "Let's Get You Started",
+    "roleQuestion": "How do you want to use BaseedWork?",
+    "freelancer": "I'm a Freelancer",
+    "freelancerDesc": "I want to find work and get paid for my skills",
+    "employer": "I'm an Employer",
+    "employerDesc": "I want to hire talented freelancers for my projects"
+  },
+  "gigs": {
+    "postGig": "Post a Gig",
+    "browseGigs": "Browse Gigs",
+    "title": "Title",
+    "description": "Description",
+    "category": "Category",
+    "skills": "Required Skills",
+    "budget": "Budget",
+    "budgetMin": "Minimum Budget (₹)",
+    "budgetMax": "Maximum Budget (₹)",
+    "deadline": "Deadline",
+    "experienceLevel": "Experience Level",
+    "remote": "Remote",
+    "local": "Local",
+    "bids": "Bids",
+    "noBids": "No bids yet",
+    "placeBid": "Place a Bid"
+  },
+  "bids": {
+    "amount": "Your Bid Amount (₹)",
+    "deliveryDays": "Delivery Time (days)",
+    "coverLetter": "Cover Letter",
+    "matchScore": "AI Match Score",
+    "submitBid": "Submit Bid",
+    "acceptBid": "Accept Bid",
+    "rejectBid": "Reject Bid"
+  },
+  "invoice": {
+    "invoices": "Invoices",
+    "invoiceNumber": "Invoice #",
+    "downloadPdf": "Download PDF",
+    "markPaid": "Mark as Paid",
+    "status": "Status",
+    "total": "Total",
+    "dueDate": "Due Date"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "headline": "Headline",
+    "bio": "Bio",
+    "hourlyRate": "Hourly Rate (₹)",
+    "skills": "Skills",
+    "portfolio": "Portfolio",
+    "reviews": "Reviews",
+    "completedGigs": "Completed Gigs",
+    "avgRating": "Average Rating",
+    "totalEarnings": "Total Earnings"
+  }
+}
