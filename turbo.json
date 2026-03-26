@@ -16,8 +16,7 @@
         "DIRECT_URL",
         "OPENROUTER_API_KEY",
         "HUGGINGFACE_API_KEY",
-        "NEXT_PUBLIC_APP_URL",
-        "NODE_ENV"
+        "NEXT_PUBLIC_APP_URL"
       ]
     },
     "lint": {
