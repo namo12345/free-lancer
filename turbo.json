@@ -7,7 +7,18 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "OPENROUTER_API_KEY",
+        "HUGGINGFACE_API_KEY",
+        "NEXT_PUBLIC_APP_URL",
+        "NODE_ENV"
+      ]
     },
     "lint": {
       "dependsOn": ["^build"]
