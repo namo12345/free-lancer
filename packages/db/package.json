@@ -11,6 +11,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "studio": "prisma studio",
     "seed": "tsx prisma/seed.ts",
+    "bootstrap:e2e": "node scripts/bootstrap-e2e-users.cjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -1,33 +1,28 @@
-"use client";
-
 import { Sidebar } from "@/components/layout/sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
+import { getFreelancerDashboardData } from "@/server/actions/dashboard.actions";
 
-export default function FreelancerDashboardPage() {
-  const stats = {
-    totalEarnings: 350000,
-    activeBids: 3,
-    completedGigs: 24,
-    avgRating: 4.8,
-    pendingInvoices: 1,
-    profileViews: 142,
-  };
+export default async function FreelancerDashboardPage() {
+  const data = await getFreelancerDashboardData();
 
-  const recentActivity = [
-    { type: "accepted", text: 'Bid accepted for "Build a React Dashboard"', time: "2 hours ago", color: "bg-green-500" },
-    { type: "bid", text: 'New bid placed on "Mobile App UI Design"', time: "1 day ago", color: "bg-blue-500" },
-    { type: "invoice", text: "Invoice BW-2026-0001 sent", time: "2 days ago", color: "bg-yellow-500" },
-    { type: "review", text: "Received a 5-star review from TechCorp India", time: "3 days ago", color: "bg-purple-500" },
-    { type: "milestone", text: 'Milestone 2 approved for "API Integration"', time: "4 days ago", color: "bg-green-500" },
-  ];
+  if (!data) {
+    return (
+      <>
+        <Sidebar role="freelancer" />
+        <main className="flex-1 p-6">
+          <div className="text-center py-12 text-gray-500">
+            <p className="text-lg font-medium">Unable to load dashboard</p>
+            <p className="mt-1">Please sign in to view your dashboard.</p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
-  const activeGigs = [
-    { title: "Build a React Dashboard", client: "TechCorp India", budget: 22000, progress: 65, deadline: "15 Apr 2026" },
-    { title: "API Integration Service", client: "StartupXYZ", budget: 15000, progress: 30, deadline: "22 Apr 2026" },
-  ];
+  const { stats, activeGigs, recentBids } = data;
 
   return (
     <>
@@ -43,13 +38,14 @@ export default function FreelancerDashboardPage() {
           </Link>
         </div>
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="border-l-4 border-l-green-500">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Earnings</p>
-                  <p className="text-2xl font-bold mt-1">{formatCurrency(stats.totalEarnings)}</p>
+                  <p className="text-2xl font-bold mt-1">{formatCurrency(Number(stats.totalEarnings))}</p>
                 </div>
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -88,10 +84,12 @@ export default function FreelancerDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Avg Rating</p>
-                  <p className="text-2xl font-bold mt-1">⭐ {stats.avgRating}</p>
+                  <p className="text-2xl font-bold mt-1">
+                    {stats.avgRating > 0 ? `${stats.avgRating.toFixed(1)}` : "N/A"}
+                  </p>
                 </div>
                 <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <span className="text-lg">🏆</span>
+                  <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                 </div>
               </div>
             </CardContent>
@@ -104,42 +102,80 @@ export default function FreelancerDashboardPage() {
             <CardTitle className="text-lg">Active Gigs</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {activeGigs.map((gig, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{gig.title}</p>
-                    <p className="text-xs text-muted-foreground">{gig.client} · Due {gig.deadline}</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-semibold text-sm">{formatCurrency(gig.budget)}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-brand-600 rounded-full" style={{ width: `${gig.progress}%` }} />
+            {activeGigs.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p className="text-sm">No active gigs right now.</p>
+                <Link href="/gigs" className="text-sm text-brand-600 hover:underline mt-1 inline-block">
+                  Browse gigs to find work
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activeGigs.map((gig) => {
+                  const progress = gig.milestonesTotal > 0
+                    ? Math.round((gig.milestonesCompleted / gig.milestonesTotal) * 100)
+                    : 0;
+                  return (
+                    <Link key={gig.id} href={`/gigs/${gig.id}`}>
+                      <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{gig.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {gig.client}
+                            {gig.deadline ? ` \u00B7 Due ${formatDate(gig.deadline)}` : ""}
+                          </p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="font-semibold text-sm">{formatCurrency(Number(gig.budget))}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                              <div className="h-full bg-brand-600 rounded-full" style={{ width: `${progress}%` }} />
+                            </div>
+                            <span className="text-xs text-muted-foreground">{progress}%</span>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-xs text-muted-foreground">{gig.progress}%</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Quick Stats + Recent Activity */}
+        {/* Recent Bids + Quick Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-2">
-            <CardHeader className="pb-3"><CardTitle className="text-lg">Recent Activity</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-lg">Recent Bids</CardTitle></CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {recentActivity.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-3 text-sm py-1.5">
-                    <div className={`w-2 h-2 ${item.color} rounded-full shrink-0`} />
-                    <span className="flex-1">{item.text}</span>
-                    <span className="text-muted-foreground text-xs shrink-0">{item.time}</span>
-                  </div>
-                ))}
-              </div>
+              {recentBids.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p className="text-sm">No bids placed yet.</p>
+                  <Link href="/gigs" className="text-sm text-brand-600 hover:underline mt-1 inline-block">
+                    Find gigs and start bidding
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {recentBids.map((bid) => {
+                    const colorMap: Record<string, string> = {
+                      PENDING: "bg-blue-500",
+                      ACCEPTED: "bg-green-500",
+                      REJECTED: "bg-red-500",
+                      WITHDRAWN: "bg-gray-400",
+                    };
+                    return (
+                      <div key={bid.id} className="flex items-center gap-3 text-sm py-1.5">
+                        <div className={`w-2 h-2 ${colorMap[bid.status] ?? "bg-gray-400"} rounded-full shrink-0`} />
+                        <span className="flex-1">
+                          {bid.status === "ACCEPTED" ? "Bid accepted" : bid.status === "REJECTED" ? "Bid rejected" : "Bid placed"} for &quot;{bid.gigTitle}&quot; &middot; {formatCurrency(Number(bid.amount))}
+                        </span>
+                        <span className="text-muted-foreground text-xs shrink-0">{formatDate(bid.createdAt)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -147,20 +183,24 @@ export default function FreelancerDashboardPage() {
             <CardHeader className="pb-3"><CardTitle className="text-lg">Quick Stats</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Profile Views</span>
-                <Badge variant="secondary">{stats.profileViews} this month</Badge>
+                <span className="text-sm text-muted-foreground">Pending Invoices</span>
+                <Badge className={stats.pendingInvoices > 0 ? "bg-yellow-100 text-yellow-700" : ""}>
+                  {stats.pendingInvoices}
+                </Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Bid Success Rate</span>
-                <Badge className="bg-green-100 text-green-700">67%</Badge>
+                <span className="text-sm text-muted-foreground">Active Bids</span>
+                <Badge variant="secondary">{stats.activeBids}</Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Avg Response Time</span>
-                <Badge variant="secondary">2.4 hours</Badge>
+                <span className="text-sm text-muted-foreground">Completed Gigs</span>
+                <Badge variant="secondary">{stats.completedGigs}</Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Pending Invoice</span>
-                <Badge className="bg-yellow-100 text-yellow-700">{stats.pendingInvoices}</Badge>
+                <span className="text-sm text-muted-foreground">Rating</span>
+                <Badge className="bg-green-100 text-green-700">
+                  {stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "N/A"}
+                </Badge>
               </div>
             </CardContent>
           </Card>

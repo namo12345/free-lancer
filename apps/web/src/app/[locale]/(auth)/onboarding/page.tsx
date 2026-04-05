@@ -1,23 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { createUserRecord, getMyUserRole } from "@/server/actions/profile.actions";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
   const [selectedRole, setSelectedRole] = useState<"FREELANCER" | "EMPLOYER" | null>(null);
-  const router = useRouter();
+  const [existingRole, setExistingRole] = useState<"FREELANCER" | "EMPLOYER" | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleContinue() {
+  function navigateToRole(role: "FREELANCER" | "EMPLOYER") {
+    const locale = window.location.pathname.split("/")[1] || "en";
+    const target =
+      role === "FREELANCER"
+        ? `/${locale}/freelancer/profile`
+        : `/${locale}/employer/profile`;
+    window.location.assign(target);
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function preloadRole() {
+      try {
+        const role = await getMyUserRole();
+        if (!mounted) return;
+        if (role === "FREELANCER" || role === "EMPLOYER") {
+          setExistingRole(role);
+          setSelectedRole(role);
+        }
+      } catch {
+        // Ignore preload failures and allow manual selection.
+      }
+    }
+
+    preloadRole();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  async function handleContinue() {
     if (!selectedRole) return;
-    // In production: save role to DB, then redirect
-    if (selectedRole === "FREELANCER") {
-      router.push("/freelancer/profile");
-    } else {
-      router.push("/employer/profile");
+    setSaving(true);
+    setError(null);
+    try {
+      if (existingRole !== selectedRole) {
+        await createUserRecord(selectedRole);
+      }
+      navigateToRole(selectedRole);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setSaving(false);
     }
   }
 
@@ -29,6 +68,7 @@ export default function OnboardingPage() {
       </CardHeader>
       <CardContent className="space-y-4">
         <button
+          type="button"
           onClick={() => setSelectedRole("FREELANCER")}
           className={`w-full p-6 rounded-lg border-2 text-left transition-colors ${
             selectedRole === "FREELANCER"
@@ -50,6 +90,7 @@ export default function OnboardingPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setSelectedRole("EMPLOYER")}
           className={`w-full p-6 rounded-lg border-2 text-left transition-colors ${
             selectedRole === "EMPLOYER"
@@ -70,8 +111,12 @@ export default function OnboardingPage() {
           </div>
         </button>
 
-        <Button className="w-full mt-4" size="lg" disabled={!selectedRole} onClick={handleContinue}>
-          Continue
+        {error && (
+          <p className="text-sm text-red-600 text-center">{error}</p>
+        )}
+
+        <Button className="w-full mt-4" size="lg" disabled={!selectedRole || saving} onClick={handleContinue}>
+          {saving ? "Setting up..." : "Continue"}
         </Button>
       </CardContent>
     </Card>

@@ -20,6 +20,16 @@ export function useRealtimeMessages(conversationId: string | null) {
   const [isTyping, setIsTyping] = useState(false);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
+  const appendMessage = useCallback((message: Message) => {
+    setMessages((prev) => {
+      if (prev.some((existing) => existing.id === message.id)) {
+        return prev;
+      }
+
+      return [...prev, message];
+    });
+  }, []);
+
   useEffect(() => {
     if (!conversationId) return;
 
@@ -27,7 +37,7 @@ export function useRealtimeMessages(conversationId: string | null) {
     const channel = supabase
       .channel(`conversation:${conversationId}`)
       .on("broadcast", { event: "new_message" }, (payload) => {
-        setMessages((prev) => [...prev, payload.payload as Message]);
+        appendMessage(payload.payload as Message);
       })
       .on("broadcast", { event: "typing" }, () => {
         setIsTyping(true);
@@ -40,33 +50,17 @@ export function useRealtimeMessages(conversationId: string | null) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [conversationId]);
+  }, [appendMessage, conversationId]);
 
-  const sendMessage = useCallback(
-    async (content: string, senderId: string, receiverId: string) => {
-      if (!conversationId || !channelRef.current) return;
+  const broadcastMessage = useCallback((message: Message) => {
+    if (!channelRef.current) return;
 
-      const message: Message = {
-        id: crypto.randomUUID(),
-        conversationId,
-        senderId,
-        receiverId,
-        content,
-        isRead: false,
-        createdAt: new Date().toISOString(),
-      };
-
-      channelRef.current.send({
-        type: "broadcast",
-        event: "new_message",
-        payload: message,
-      });
-
-      setMessages((prev) => [...prev, message]);
-      return message;
-    },
-    [conversationId]
-  );
+    channelRef.current.send({
+      type: "broadcast",
+      event: "new_message",
+      payload: message,
+    });
+  }, []);
 
   const sendTyping = useCallback(() => {
     if (!channelRef.current) return;
@@ -77,7 +71,7 @@ export function useRealtimeMessages(conversationId: string | null) {
     });
   }, []);
 
-  return { messages, setMessages, isTyping, sendMessage, sendTyping };
+  return { messages, setMessages, appendMessage, isTyping, broadcastMessage, sendTyping };
 }
 
 export function useRealtimeNotifications(userId: string | null) {

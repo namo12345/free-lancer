@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { formatCurrency } from "@/lib/utils";
+import { Link } from "@/i18n/routing";
 
 interface SearchResult {
   id: string;
@@ -21,59 +22,39 @@ interface SearchResult {
   matchReason: string;
 }
 
-const mockResults: SearchResult[] = [
-  {
-    id: "1",
-    displayName: "Priya Sharma",
-    headline: "UI/UX Designer | Minimalist Aesthetic",
-    city: "Bangalore",
-    hourlyRate: 1200,
-    avgRating: 4.9,
-    completedGigs: 32,
-    skills: ["Figma", "UI Design", "Brand Identity", "Adobe Illustrator"],
-    matchScore: 95,
-    matchReason: "Strong portfolio in minimalist logo design. Experience with D2C brands. Based in Bangalore with excellent reviews.",
-  },
-  {
-    id: "2",
-    displayName: "Amit Patel",
-    headline: "Graphic Designer | Desi Touch Specialist",
-    city: "Mumbai",
-    hourlyRate: 900,
-    avgRating: 4.7,
-    completedGigs: 18,
-    skills: ["Logo Design", "Adobe Illustrator", "Photoshop", "Brand Identity"],
-    matchScore: 88,
-    matchReason: "Specializes in blending modern minimalism with Indian design elements. Previous work includes D2C food brands.",
-  },
-  {
-    id: "3",
-    displayName: "Neha R",
-    headline: "Brand Designer | Corporate + Startup",
-    city: "Delhi",
-    hourlyRate: 1500,
-    avgRating: 4.6,
-    completedGigs: 45,
-    skills: ["Brand Identity", "Logo Design", "Figma", "Typography"],
-    matchScore: 82,
-    matchReason: "Extensive brand design experience. Higher price but consistently delivers premium quality.",
-  },
-];
-
 export function SemanticSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
+  const [error, setError] = useState("");
+  const [searched, setSearched] = useState(false);
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
     setSearching(true);
-    // In production: call AI search endpoint
-    setTimeout(() => {
-      setResults(mockResults);
+    setError("");
+    setSearched(true);
+
+    try {
+      const res = await fetch("/api/v1/ai/search/freelancers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: query.trim(), limit: 10 }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Search failed");
+      }
+
+      const data = await res.json();
+      setResults(data.results || []);
+    } catch {
+      setError("Search is currently unavailable. Please try again later.");
+      setResults([]);
+    } finally {
       setSearching(false);
-    }, 800);
+    }
   }
 
   return (
@@ -90,52 +71,63 @@ export function SemanticSearch() {
         </Button>
       </form>
 
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
+      )}
+
       {results.length > 0 && (
         <p className="text-sm text-muted-foreground">
           Found {results.length} matches for &ldquo;{query}&rdquo;
         </p>
       )}
 
+      {searched && results.length === 0 && !searching && !error && (
+        <p className="text-sm text-muted-foreground text-center py-8">No freelancers found matching your query. Try different keywords.</p>
+      )}
+
       <div className="space-y-4">
         {results.map((r) => (
-          <Card key={r.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Avatar fallback={r.displayName} size="lg" />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg">{r.displayName}</h3>
-                      <p className="text-sm text-gray-500">{r.headline}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{r.city}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className={`text-lg font-bold ${r.matchScore >= 90 ? "text-green-600" : r.matchScore >= 80 ? "text-yellow-600" : "text-gray-600"}`}>
-                        {r.matchScore}% match
+          <Link key={r.id} href={`/profiles/${r.id}`}>
+            <Card className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <Avatar fallback={r.displayName} size="lg" />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-lg">{r.displayName}</h3>
+                        {r.headline && <p className="text-sm text-gray-500">{r.headline}</p>}
+                        {r.city && <p className="text-xs text-gray-400 mt-0.5">{r.city}</p>}
                       </div>
-                      {r.hourlyRate && <div className="text-sm text-gray-500">{formatCurrency(r.hourlyRate)}/hr</div>}
+                      <div className="text-right">
+                        <div className={`text-lg font-bold ${r.matchScore >= 90 ? "text-green-600" : r.matchScore >= 80 ? "text-yellow-600" : "text-gray-600"}`}>
+                          {r.matchScore}% match
+                        </div>
+                        {r.hourlyRate && <div className="text-sm text-gray-500">{formatCurrency(r.hourlyRate)}/hr</div>}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Why this match */}
-                  <div className="mt-3 p-3 bg-brand-50 rounded-lg border border-brand-100">
-                    <div className="text-xs font-medium text-brand-700 mb-1">Why this match</div>
-                    <p className="text-sm text-brand-900">{r.matchReason}</p>
-                  </div>
+                    {r.matchReason && (
+                      <div className="mt-3 p-3 bg-brand-50 rounded-lg border border-brand-100">
+                        <div className="text-xs font-medium text-brand-700 mb-1">Why this match</div>
+                        <p className="text-sm text-brand-900">{r.matchReason}</p>
+                      </div>
+                    )}
 
-                  <div className="flex items-center justify-between mt-3">
-                    <div className="flex flex-wrap gap-1.5">
-                      {r.skills.map((s) => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
-                    </div>
-                    <div className="flex gap-4 text-xs text-gray-500">
-                      <span>⭐ {r.avgRating}</span>
-                      <span>{r.completedGigs} gigs</span>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex flex-wrap gap-1.5">
+                        {r.skills.map((s) => <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>)}
+                      </div>
+                      <div className="flex gap-4 text-xs text-gray-500">
+                        {r.avgRating > 0 && <span>{r.avgRating} rating</span>}
+                        <span>{r.completedGigs} gigs</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

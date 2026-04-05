@@ -5,42 +5,59 @@ import { createClient } from "@/lib/supabase/server";
 import { updateFreelancerProfileSchema, updateEmployerProfileSchema } from "@hiresense/shared";
 import type { UpdateFreelancerProfileInput, UpdateEmployerProfileInput } from "@hiresense/shared";
 
+function normalizeOptionalString(value: string | null | undefined) {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export async function createUserRecord(role: "FREELANCER" | "EMPLOYER") {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  // Check if user already exists
-  const existing = await prisma.user.findUnique({ where: { supabaseId: user.id } });
-  if (existing) return existing;
+  const email = user.email || "";
+  const phone = user.phone || null;
+  const fallbackName = email.split("@")[0] || (role === "FREELANCER" ? "Freelancer" : "Employer");
 
-  const dbUser = await prisma.user.create({
-    data: {
-      supabaseId: user.id,
-      email: user.email || "",
-      phone: user.phone || null,
+  const dbUser = await prisma.user.upsert({
+    where: { supabaseId: user.id },
+    update: {
+      email,
+      phone,
       role,
+    },
+    create: {
+      supabaseId: user.id,
+      email,
+      phone,
+      role,
+    },
+    include: {
+      freelancerProfile: true,
+      employerProfile: true,
     },
   });
 
-  // Create empty profile
-  if (role === "FREELANCER") {
+  if (role === "FREELANCER" && !dbUser.freelancerProfile) {
     await prisma.freelancerProfile.create({
       data: {
         userId: dbUser.id,
-        displayName: user.email?.split("@")[0] || "Freelancer",
-      },
-    });
-  } else {
-    await prisma.employerProfile.create({
-      data: {
-        userId: dbUser.id,
-        displayName: user.email?.split("@")[0] || "Employer",
+        displayName: fallbackName,
       },
     });
   }
 
-  return dbUser;
+  if (role === "EMPLOYER" && !dbUser.employerProfile) {
+    await prisma.employerProfile.create({
+      data: {
+        userId: dbUser.id,
+        displayName: fallbackName,
+      },
+    });
+  }
+
+  return { success: true, role };
 }
 
 export async function updateFreelancerProfile(input: UpdateFreelancerProfileInput) {
@@ -48,21 +65,55 @@ export async function updateFreelancerProfile(input: UpdateFreelancerProfileInpu
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const validated = updateFreelancerProfileSchema.parse(input);
+  const parsed = updateFreelancerProfileSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid freelancer profile");
+  }
+  const validated = parsed.data;
 
   const dbUser = await prisma.user.findUnique({
     where: { supabaseId: user.id },
     include: { freelancerProfile: true },
   });
-  if (!dbUser?.freelancerProfile) throw new Error("Profile not found");
+  if (!dbUser || dbUser.role !== "FREELANCER") throw new Error("Only freelancers can edit this profile");
 
   const { skillIds, ...profileData } = validated;
+  const normalizedData = {
+    ...profileData,
+    hourlyRate: profileData.hourlyRate || undefined,
+    githubUrl: normalizeOptionalString(profileData.githubUrl),
+    behanceUrl: normalizeOptionalString(profileData.behanceUrl),
+    dribbbleUrl: normalizeOptionalString(profileData.dribbbleUrl),
+    linkedinUrl: normalizeOptionalString(profileData.linkedinUrl),
+    upiId: normalizeOptionalString(profileData.upiId),
+    bankAccountNumber: normalizeOptionalString(profileData.bankAccountNumber),
+    bankIfsc: normalizeOptionalString(profileData.bankIfsc),
+    bankName: normalizeOptionalString(profileData.bankName),
+  };
 
-  const profile = await prisma.freelancerProfile.update({
-    where: { id: dbUser.freelancerProfile.id },
-    data: {
-      ...profileData,
-      hourlyRate: profileData.hourlyRate || undefined,
+  const profile = await prisma.freelancerProfile.upsert({
+    where: { userId: dbUser.id },
+    update: normalizedData,
+    create: {
+      userId: dbUser.id,
+      displayName: normalizedData.displayName,
+      headline: normalizedData.headline,
+      bio: normalizedData.bio,
+      avatarUrl: null,
+      hourlyRate: normalizedData.hourlyRate,
+      currency: "INR",
+      city: normalizedData.city,
+      state: normalizedData.state,
+      isRemote: normalizedData.isRemote,
+      githubUrl: normalizedData.githubUrl,
+      behanceUrl: normalizedData.behanceUrl,
+      dribbbleUrl: normalizedData.dribbbleUrl,
+      linkedinUrl: normalizedData.linkedinUrl,
+      upiId: normalizedData.upiId,
+      bankAccountNumber: normalizedData.bankAccountNumber,
+      bankIfsc: normalizedData.bankIfsc,
+      bankName: normalizedData.bankName,
+      aiPersonalityTags: [],
     },
   });
 
@@ -84,17 +135,35 @@ export async function updateEmployerProfile(input: UpdateEmployerProfileInput) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const validated = updateEmployerProfileSchema.parse(input);
+  const parsed = updateEmployerProfileSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid employer profile");
+  }
+  const validated = parsed.data;
 
   const dbUser = await prisma.user.findUnique({
     where: { supabaseId: user.id },
     include: { employerProfile: true },
   });
-  if (!dbUser?.employerProfile) throw new Error("Profile not found");
+  if (!dbUser || dbUser.role !== "EMPLOYER") throw new Error("Only employers can edit this profile");
 
-  await prisma.employerProfile.update({
-    where: { id: dbUser.employerProfile.id },
-    data: validated,
+  await prisma.employerProfile.upsert({
+    where: { userId: dbUser.id },
+    update: {
+      ...validated,
+      website: normalizeOptionalString(validated.website),
+    },
+    create: {
+      userId: dbUser.id,
+      displayName: validated.displayName,
+      companyName: validated.companyName,
+      bio: validated.bio,
+      avatarUrl: null,
+      website: normalizeOptionalString(validated.website),
+      industry: validated.industry,
+      city: validated.city,
+      state: validated.state,
+    },
   });
 
   return { success: true };
@@ -118,4 +187,19 @@ export async function getMyProfile() {
       employerProfile: true,
     },
   });
+}
+
+export async function getMyUserRole() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const dbUser = await prisma.user.findUnique({
+    where: { supabaseId: user.id },
+    select: { role: true },
+  });
+
+  return dbUser?.role ?? null;
 }

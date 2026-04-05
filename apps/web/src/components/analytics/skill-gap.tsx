@@ -2,9 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
-interface SkillGap {
+export interface SkillGap {
   skill: string;
   demandScore: number;
   jobMatchIncrease: number;
@@ -12,19 +11,13 @@ interface SkillGap {
   reason: string;
 }
 
-const mockGaps: SkillGap[] = [
-  { skill: "Next.js", demandScore: 89, jobMatchIncrease: 37, difficulty: "easy", reason: "73% of React jobs also require Next.js" },
-  { skill: "Docker", demandScore: 76, jobMatchIncrease: 22, difficulty: "moderate", reason: "Growing requirement for deployment-aware developers" },
-  { skill: "GraphQL", demandScore: 68, jobMatchIncrease: 18, difficulty: "moderate", reason: "API design skill that commands premium rates" },
-];
-
-const difficultyColors: Record<string, string> = {
+const difficultyColors: Record<SkillGap["difficulty"], string> = {
   easy: "bg-green-100 text-green-800",
   moderate: "bg-yellow-100 text-yellow-800",
   hard: "bg-red-100 text-red-800",
 };
 
-export function SkillGapAnalysis() {
+export function SkillGapAnalysis({ gaps }: { gaps: SkillGap[] }) {
   return (
     <Card>
       <CardHeader>
@@ -34,32 +27,43 @@ export function SkillGapAnalysis() {
           </svg>
           Skill Gap Analysis
         </CardTitle>
-        <p className="text-sm text-muted-foreground">Skills that could increase your job matches</p>
+        <p className="text-sm text-muted-foreground">
+          Skills that could increase your job matches
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        {mockGaps.map((gap) => (
-          <div key={gap.skill} className="p-4 border rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">{gap.skill}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyColors[gap.difficulty]}`}>
-                  {gap.difficulty}
-                </span>
-              </div>
-              <Badge variant="secondary">+{gap.jobMatchIncrease}% more matches</Badge>
-            </div>
-            <p className="text-sm text-gray-600">{gap.reason}</p>
-            <div className="mt-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">Market demand:</span>
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
-                  <div className="bg-brand-500 h-2 rounded-full transition-all" style={{ width: `${gap.demandScore}%` }} />
-                </div>
-                <span className="text-xs font-medium">{gap.demandScore}%</span>
-              </div>
-            </div>
+        {gaps.length === 0 ? (
+          <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+            No current skill gaps found from active gigs. Keep your profile updated to surface better matches.
           </div>
-        ))}
+        ) : (
+          gaps.map((gap) => (
+            <div key={gap.skill} className="p-4 border rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">{gap.skill}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyColors[gap.difficulty]}`}>
+                    {gap.difficulty}
+                  </span>
+                </div>
+                <Badge variant="secondary">+{gap.jobMatchIncrease}% more matches</Badge>
+              </div>
+              <p className="text-sm text-gray-600">{gap.reason}</p>
+              <div className="mt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">Market demand:</span>
+                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-brand-500 h-2 rounded-full transition-all"
+                      style={{ width: `${gap.demandScore}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium">{gap.demandScore}%</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </CardContent>
     </Card>
   );

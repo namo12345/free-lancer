@@ -8,7 +8,10 @@ const gigFieldsSchema = z.object({
   budgetMin: z.number().positive().min(500),
   budgetMax: z.number().positive(),
   budgetType: z.enum(["fixed", "hourly"]),
-  deadline: z.string().datetime().optional(),
+  status: z.enum(["DRAFT", "OPEN"]).default("OPEN"),
+  deadline: z
+    .union([z.string().datetime(), z.string().regex(/^\d{4}-\d{2}-\d{2}$/)])
+    .optional(),
   duration: z.string().optional(),
   experienceLevel: z.enum(["Entry", "Intermediate", "Expert"]).optional(),
   isRemote: z.boolean().default(true),

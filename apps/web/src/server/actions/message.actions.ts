@@ -3,6 +3,28 @@
 import { prisma } from "@hiresense/db";
 import { createClient } from "@/lib/supabase/server";
 
+function serializeMessage(message: {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  attachmentUrl: string | null;
+  isRead: boolean;
+  createdAt: Date;
+}) {
+  return {
+    id: message.id,
+    conversationId: message.conversationId,
+    senderId: message.senderId,
+    receiverId: message.receiverId,
+    content: message.content,
+    attachmentUrl: message.attachmentUrl,
+    isRead: message.isRead,
+    createdAt: message.createdAt.toISOString(),
+  };
+}
+
 export async function getConversations() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -27,15 +49,24 @@ export async function getMessages(conversationId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
+  const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
+  if (!dbUser) throw new Error("User not found");
+
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      participantIds: { has: dbUser.id },
+    },
+    select: { id: true },
+  });
+  if (!conversation) throw new Error("Conversation not found");
+
   const messages = await prisma.message.findMany({
     where: { conversationId },
     orderBy: { createdAt: "asc" },
-    include: {
-      sender: { select: { id: true, email: true, freelancerProfile: { select: { displayName: true, avatarUrl: true } }, employerProfile: { select: { displayName: true, avatarUrl: true } } } },
-    },
   });
 
-  return messages;
+  return messages.map(serializeMessage);
 }
 
 export async function sendMessage(conversationId: string, receiverId: string, content: string, attachmentUrl?: string) {
@@ -45,6 +76,18 @@ export async function sendMessage(conversationId: string, receiverId: string, co
 
   const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } });
   if (!dbUser) throw new Error("User not found");
+
+  const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      AND: [
+        { participantIds: { has: dbUser.id } },
+        { participantIds: { hasSome: [receiverId] } },
+      ],
+    },
+    select: { id: true },
+  });
+  if (!conversation) throw new Error("Conversation not found");
 
   const message = await prisma.message.create({
     data: {
@@ -61,7 +104,17 @@ export async function sendMessage(conversationId: string, receiverId: string, co
     data: { lastMessageAt: new Date() },
   });
 
-  return message;
+  await prisma.notification.create({
+    data: {
+      userId: receiverId,
+      type: "message",
+      title: "New message",
+      body: content.slice(0, 120),
+      data: { conversationId, senderId: dbUser.id },
+    },
+  });
+
+  return serializeMessage(message);
 }
 
 export async function createConversation(otherUserId: string, gigId?: string) {

@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
 import { useRealtimeMessages } from "@/hooks/use-realtime";
+import {
+  getMessages,
+  markMessagesRead,
+  sendMessage as persistMessage,
+} from "@/server/actions/message.actions";
 
 interface ChatWindowProps {
   conversationId: string;
@@ -13,15 +18,51 @@ interface ChatWindowProps {
 }
 
 export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWindowProps) {
-  const { messages, isTyping, sendMessage, sendTyping } = useRealtimeMessages(conversationId);
+  const {
+    messages,
+    setMessages,
+    appendMessage,
+    isTyping,
+    broadcastMessage,
+    sendTyping,
+  } = useRealtimeMessages(conversationId);
   const [input, setInput] = useState("");
-  const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sendError, setSendError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadMessages() {
+      setLoading(true);
+      try {
+        const initialMessages = await getMessages(conversationId);
+        if (!mounted) return;
+        setMessages(initialMessages);
+        await markMessagesRead(conversationId);
+      } catch {
+        if (mounted) {
+          setMessages([]);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadMessages();
+
+    return () => {
+      mounted = false;
+    };
+  }, [conversationId, setMessages]);
 
   function handleInputChange(value: string) {
     setInput(value);
@@ -34,9 +75,22 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
     e.preventDefault();
     if (!input.trim()) return;
 
-    await sendMessage(input.trim(), currentUserId, otherUser.id);
-    setInput("");
-    setAttachmentUrl(null);
+    setSendError(null);
+
+    try {
+      const savedMessage = await persistMessage(
+        conversationId,
+        otherUser.id,
+        input.trim()
+      );
+      appendMessage(savedMessage);
+      broadcastMessage(savedMessage);
+      setInput("");
+    } catch (error) {
+      setSendError(
+        error instanceof Error ? error.message : "Failed to send message."
+      );
+    }
   }
 
   function formatTime(dateStr: string) {
@@ -56,7 +110,12 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.length === 0 && (
+        {loading && (
+          <div className="text-center text-sm text-muted-foreground mt-20">
+            Loading conversation...
+          </div>
+        )}
+        {!loading && messages.length === 0 && (
           <div className="text-center text-sm text-muted-foreground mt-20">
             No messages yet. Say hello!
           </div>
@@ -85,13 +144,6 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
 
       {/* Input */}
       <form onSubmit={handleSend} className="p-3 border-t flex gap-2">
-        <Button type="button" variant="ghost" size="icon" className="shrink-0" onClick={() => document.getElementById("chat-file")?.click()}>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-        </Button>
-        <input id="chat-file" type="file" className="hidden" onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) setAttachmentUrl(URL.createObjectURL(file));
-        }} />
         <Input
           value={input}
           onChange={(e) => handleInputChange(e.target.value)}
@@ -102,6 +154,9 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
         </Button>
       </form>
+      {sendError && (
+        <div className="px-3 pb-3 text-xs text-red-600">{sendError}</div>
+      )}
     </div>
   );
 }

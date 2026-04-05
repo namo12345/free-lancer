@@ -9,7 +9,11 @@ export async function createGig(input: CreateGigInput) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const validated = createGigSchema.parse(input);
+  const parsed = createGigSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message || "Invalid gig");
+  }
+  const validated = parsed.data;
 
   const dbUser = await prisma.user.findUnique({
     where: { supabaseId: user.id },
@@ -26,14 +30,14 @@ export async function createGig(input: CreateGigInput) {
       budgetMin: validated.budgetMin,
       budgetMax: validated.budgetMax,
       budgetType: validated.budgetType,
+      status: validated.status,
       deadline: validated.deadline ? new Date(validated.deadline) : null,
       duration: validated.duration,
       experienceLevel: validated.experienceLevel,
       isRemote: validated.isRemote,
       city: validated.city,
       state: validated.state,
-      status: "OPEN",
-      publishedAt: new Date(),
+      publishedAt: validated.status === "OPEN" ? new Date() : null,
       skills: {
         create: validated.skillIds.map((skillId) => ({ skillId })),
       },

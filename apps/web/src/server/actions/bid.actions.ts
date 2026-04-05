@@ -44,6 +44,16 @@ export async function submitBid(input: CreateBidInput) {
     data: { bidCount: { increment: 1 } },
   });
 
+  await prisma.notification.create({
+    data: {
+      userId: gig.posterId,
+      type: "bid",
+      title: "New bid received",
+      body: `A freelancer placed a bid on "${gig.title}".`,
+      data: { gigId: gig.id, bidId: bid.id, freelancerId: dbUser.id },
+    },
+  });
+
   return { success: true, bidId: bid.id };
 }
 
@@ -73,6 +83,33 @@ export async function acceptBid(bidId: string) {
       data: { status: "IN_PROGRESS" },
     }),
   ]);
+
+  const otherBidders = await prisma.bid.findMany({
+    where: { gigId: bid.gigId, id: { not: bidId } },
+    select: { freelancerId: true },
+  });
+
+  await prisma.notification.create({
+    data: {
+      userId: bid.freelancerId,
+      type: "bid_accepted",
+      title: "Your bid was accepted",
+      body: `Your bid for "${bid.gig.title}" was accepted.`,
+      data: { gigId: bid.gigId, bidId: bid.id },
+    },
+  });
+
+  if (otherBidders.length > 0) {
+    await prisma.notification.createMany({
+      data: otherBidders.map((otherBidder) => ({
+        userId: otherBidder.freelancerId,
+        type: "bid_rejected",
+        title: "Bid update",
+        body: `Your bid for "${bid.gig.title}" was not selected.`,
+        data: { gigId: bid.gigId },
+      })),
+    });
+  }
 
   return { success: true };
 }

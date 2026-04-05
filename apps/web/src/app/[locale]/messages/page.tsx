@@ -1,63 +1,32 @@
-"use client";
+import { getConversationsForUser } from "@/server/actions/dashboard.actions";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@hiresense/db";
+import { MessagesClient } from "./client";
 
-import { useState } from "react";
-import { Navbar } from "@/components/layout/navbar";
-import { ConversationList } from "@/components/chat/conversation-list";
-import { ChatWindow } from "@/components/chat/chat-window";
+export default async function MessagesPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-const mockConversations = [
-  {
-    id: "c1",
-    otherUser: { id: "u2", displayName: "TechCorp India", avatarUrl: undefined },
-    gigTitle: "Build a React Dashboard",
-    lastMessage: "Sure, I can start next week",
-    lastMessageAt: "2026-03-16T10:30:00Z",
-    unreadCount: 2,
-  },
-  {
-    id: "c2",
-    otherUser: { id: "u3", displayName: "Ananya S", avatarUrl: undefined },
-    gigTitle: "Logo Design for D2C Brand",
-    lastMessage: "Here are the initial concepts",
-    lastMessageAt: "2026-03-15T16:00:00Z",
-    unreadCount: 0,
-  },
-];
+  const dbUser = user
+    ? await prisma.user.findUnique({
+        where: { supabaseId: user.id },
+        select: { id: true },
+      })
+    : null;
 
-export default function MessagesPage() {
-  const [activeConvId, setActiveConvId] = useState<string | null>(null);
-  const currentUserId = "u1"; // From auth in production
-
-  const activeConv = mockConversations.find((c) => c.id === activeConvId);
+  let conversations: Awaited<ReturnType<typeof getConversationsForUser>> = [];
+  if (user) {
+    try {
+      conversations = await getConversationsForUser();
+    } catch {
+      conversations = [];
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar user={{ email: "user@example.com", displayName: "Demo User" }} />
-      <main className="max-w-6xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Messages</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <ConversationList
-              conversations={mockConversations}
-              activeId={activeConvId || undefined}
-              onSelect={setActiveConvId}
-            />
-          </div>
-          <div className="lg:col-span-2">
-            {activeConv ? (
-              <ChatWindow
-                conversationId={activeConv.id}
-                currentUserId={currentUserId}
-                otherUser={activeConv.otherUser}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-[600px] border rounded-lg bg-white text-muted-foreground">
-                Select a conversation to start chatting
-              </div>
-            )}
-          </div>
-        </div>
-      </main>
-    </div>
+    <MessagesClient
+      initialConversations={conversations}
+      currentUserId={dbUser?.id || ""}
+    />
   );
 }
