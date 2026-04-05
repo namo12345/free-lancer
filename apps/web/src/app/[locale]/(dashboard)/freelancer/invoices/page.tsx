@@ -29,7 +29,7 @@ export default async function FreelancerInvoicesPage({
         <h1 className="text-2xl font-bold mb-6">My Invoices</h1>
 
         {invoices.length === 0 ? (
-          <div className="text-center py-16 text-gray-500">
+          <div className="text-center py-16 text-muted-foreground">
             <p className="text-lg font-medium">No invoices yet</p>
             <p className="mt-1">Invoices will appear here once a bid is accepted.</p>
           </div>
@@ -43,8 +43,8 @@ export default async function FreelancerInvoicesPage({
                       <h3 className="font-semibold">{inv.invoiceNumber}</h3>
                       <Badge variant={statusColors[inv.status] ?? "default"}>{inv.status}</Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">{inv.gigTitle}</p>
-                    <p className="text-sm text-gray-500">From: {inv.employerName}{inv.dueDate ? ` · Due: ${formatDate(inv.dueDate)}` : ""}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{inv.gigTitle}</p>
+                    <p className="text-sm text-muted-foreground">From: {inv.employerName}{inv.dueDate ? ` · Due: ${formatDate(inv.dueDate)}` : ""}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-lg font-bold">{formatCurrency(inv.totalAmount)}</div>

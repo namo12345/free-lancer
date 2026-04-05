@@ -198,7 +198,7 @@ export function PortfolioClient({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
                   onClick={() => handleDelete(item.id)}
                   disabled={deletingId === item.id}
                 >
@@ -209,7 +209,7 @@ export function PortfolioClient({
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-muted-foreground">
           <p className="text-lg mb-2">No portfolio items yet</p>
           <p className="text-sm">
             Sync your GitHub repos or add projects manually to showcase your work.

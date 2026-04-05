@@ -66,7 +66,7 @@ export function Navbar({ user, notifications = [] }: NavbarProps) {
                   fallback={user.displayName || user.email}
                   size="sm"
                 />
-                <Button variant="ghost" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
                   Logout
                 </Button>
               </>
@@ -75,7 +75,7 @@ export function Navbar({ user, notifications = [] }: NavbarProps) {
                 <Link href="/login">
                   <Button variant="ghost" size="sm">{t("login")}</Button>
                 </Link>
-                <Link href="/signup">
+                <Link href="/login">
                   <Button size="sm">{t("signup")}</Button>
                 </Link>
               </>

@@ -81,7 +81,7 @@ export function TechNewsClient() {
           ))}
         </div>
       ) : articles.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-muted-foreground">
           <p className="text-lg font-medium">No news available</p>
           <p className="text-sm mt-1">Please try again later.</p>
         </div>
@@ -91,7 +91,7 @@ export function TechNewsClient() {
             <Card key={article.id} className="hover:shadow-md transition-shadow group">
               <CardContent className="p-5">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-500 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
                     {idx + 1}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -99,11 +99,11 @@ export function TechNewsClient() {
                       href={article.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-base font-semibold text-gray-900 hover:text-brand-600 transition-colors line-clamp-2"
+                      className="text-base font-semibold text-foreground hover:text-brand-600 transition-colors line-clamp-2"
                     >
                       {article.title}
                     </a>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                       <Badge variant="secondary" className="text-xs font-normal">{article.source}</Badge>
                       <span className="flex items-center gap-1">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>

@@ -22,7 +22,7 @@ export default async function PublicProfilePage({
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/50">
       <Navbar />
       <main className="max-w-4xl mx-auto p-6">
         {/* Header */}
@@ -36,7 +36,7 @@ export default async function PublicProfilePage({
                   <p className="text-muted-foreground">{profile.headline}</p>
                 )}
                 {(profile.city || profile.state) && (
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {[profile.city, profile.state].filter(Boolean).join(", ")}
                   </p>
                 )}
@@ -76,7 +76,7 @@ export default async function PublicProfilePage({
               <CardTitle>About</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 whitespace-pre-wrap">{profile.bio}</p>
+              <p className="text-foreground whitespace-pre-wrap">{profile.bio}</p>
             </CardContent>
           </Card>
         )}
@@ -152,7 +152,7 @@ export default async function PublicProfilePage({
                     )}
                     <h4 className="font-medium text-sm">{item.title}</h4>
                     {item.description && (
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                         {item.description}
                       </p>
                     )}

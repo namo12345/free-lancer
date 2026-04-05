@@ -26,7 +26,7 @@ export default async function EmployerDisputesPage() {
         </div>
 
         {disputes.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg mb-2">No disputes</p>
             <p className="text-sm">Flag a gig issue to start tracking disputes here.</p>
           </div>
@@ -41,10 +41,10 @@ export default async function EmployerDisputesPage() {
                         <h3 className="font-semibold">{dispute.gigTitle}</h3>
                         <Badge variant={statusColors[dispute.status]}>{dispute.status}</Badge>
                       </div>
-                      <p className="text-sm text-gray-500 mb-1">
+                      <p className="text-sm text-muted-foreground mb-1">
                         Freelancer: {dispute.freelancerName} · Filed {formatDate(dispute.createdAt)}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         <span className="font-medium">Reason:</span> {dispute.reason}
                       </p>
                     </div>

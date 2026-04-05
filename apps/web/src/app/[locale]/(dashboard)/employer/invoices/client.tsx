@@ -66,7 +66,7 @@ export function EmployerInvoicesClient({
       <h1 className="text-2xl font-bold mb-6">Invoices</h1>
 
       {invoices.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-muted-foreground">
           <p className="text-lg font-medium">No invoices yet</p>
           <p className="mt-1">Invoices are generated when you accept a bid.</p>
         </div>
@@ -82,8 +82,8 @@ export function EmployerInvoicesClient({
                       {invoice.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">{invoice.gigTitle}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground mt-1">{invoice.gigTitle}</p>
+                  <p className="text-sm text-muted-foreground">
                     To: {invoice.freelancerName}
                     {invoice.dueDate ? ` · Due: ${formatDate(invoice.dueDate)}` : ""}
                   </p>

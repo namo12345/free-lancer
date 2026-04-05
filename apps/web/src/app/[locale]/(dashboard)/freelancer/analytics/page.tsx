@@ -14,7 +14,7 @@ export default async function FreelancerAnalyticsPage() {
       <>
         <Sidebar role="freelancer" />
         <main className="flex-1 p-6">
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg font-medium">Unable to load analytics</p>
             <p className="mt-1">Please sign in as a freelancer to view this page.</p>
           </div>

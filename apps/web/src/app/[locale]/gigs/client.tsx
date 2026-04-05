@@ -46,7 +46,7 @@ export function BrowseGigsClient({ initialGigs }: BrowseGigsClientProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/50">
       <Navbar />
       <main className="max-w-6xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">{t("browseGigs")}</h1>
@@ -82,16 +82,16 @@ export function BrowseGigsClient({ initialGigs }: BrowseGigsClientProps) {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h2 className="text-lg font-semibold text-gray-900 hover:text-brand-600">
+                        <h2 className="text-lg font-semibold text-foreground hover:text-brand-600">
                           {gig.title}
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           Posted by {gig.poster.displayName} ·{" "}
                           {formatDate(gig.createdAt)}
                           {gig.isRemote && " · Remote"}
                           {gig.city && ` · ${gig.city}`}
                         </p>
-                        <p className="text-sm text-gray-600 mt-2">
+                        <p className="text-sm text-muted-foreground mt-2">
                           {truncate(gig.description, 200)}
                         </p>
                         <div className="flex flex-wrap gap-1.5 mt-3">
@@ -107,14 +107,14 @@ export function BrowseGigsClient({ initialGigs }: BrowseGigsClientProps) {
                         </div>
                       </div>
                       <div className="text-right ml-6 shrink-0">
-                        <div className="text-lg font-bold text-gray-900">
+                        <div className="text-lg font-bold text-foreground">
                           {formatCurrency(gig.budgetMin)} -{" "}
                           {formatCurrency(gig.budgetMax)}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                           {gig.budgetType === "hourly" ? "/hr" : "fixed"}
                         </div>
-                        <div className="text-sm text-gray-500 mt-2">
+                        <div className="text-sm text-muted-foreground mt-2">
                           {gig.bidCount} bids
                         </div>
                       </div>
@@ -125,7 +125,7 @@ export function BrowseGigsClient({ initialGigs }: BrowseGigsClientProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             {search || category
               ? "No gigs found matching your criteria."
               : "No gigs available yet."}

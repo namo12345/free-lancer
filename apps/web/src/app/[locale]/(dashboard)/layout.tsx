@@ -18,7 +18,12 @@ export default async function DashboardLayout({
       })
     : null;
 
-  const notifications = authUser ? await getMyNotifications(8) : [];
+  let notifications: Awaited<ReturnType<typeof getMyNotifications>> = [];
+  try {
+    if (authUser) notifications = await getMyNotifications(8);
+  } catch {
+    notifications = [];
+  }
 
   const user = authUser
     ? {

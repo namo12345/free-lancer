@@ -88,7 +88,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/50">
       <Navbar />
       <main className="max-w-5xl mx-auto p-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -99,18 +99,18 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <Badge variant="secondary">{gig.category}</Badge>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     {gig.viewCount} views
                   </span>
                 </div>
                 <h1 className="text-2xl font-bold mb-2">{gig.title}</h1>
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   Posted {formatDate(gig.createdAt)} ·{" "}
                   {gig.isRemote ? "Remote" : gig.city || gig.category} ·{" "}
                   {gig.experienceLevel || "Any level"}
                 </p>
 
-                <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
+                <div className="prose prose-sm max-w-none whitespace-pre-wrap text-foreground">
                   {gig.description}
                 </div>
 
@@ -125,7 +125,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
 
                 {/* Deadline */}
                 {gig.deadline && (
-                  <div className="mt-4 pt-4 border-t text-sm text-gray-600">
+                  <div className="mt-4 pt-4 border-t text-sm text-muted-foreground">
                     <span className="font-medium">Deadline:</span>{" "}
                     {formatDate(gig.deadline)}
                   </div>
@@ -161,7 +161,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
                             <div className="font-medium">
                               {bid.freelancerName}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-muted-foreground">
                               {bid.avgRating} rating · {bid.completedGigs}{" "}
                               gigs done
                             </div>
@@ -171,7 +171,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
                           <div className="font-bold">
                             {formatCurrency(bid.amount)}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-muted-foreground">
                             {bid.deliveryDays} days
                           </div>
                         </div>
@@ -238,7 +238,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
                             placeholder="e.g. 20000"
                             required
                           />
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground">
                             Budget: {formatCurrency(gig.budgetMin)} -{" "}
                             {formatCurrency(gig.budgetMax)}
                           </p>
@@ -274,7 +274,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
                           placeholder="Why are you the best fit for this gig? Mention relevant experience and your approach."
                           required
                         />
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           Minimum 50 characters
                         </p>
                       </div>
@@ -305,35 +305,35 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
                   {formatCurrency(gig.budgetMin)} -{" "}
                   {formatCurrency(gig.budgetMax)}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   {gig.budgetType === "hourly" ? "Per hour" : "Fixed price"}
                 </div>
                 <div className="mt-4 space-y-2 text-sm">
                   {gig.duration && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Duration</span>
+                      <span className="text-muted-foreground">Duration</span>
                       <span>{gig.duration}</span>
                     </div>
                   )}
                   {gig.experienceLevel && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Experience</span>
+                      <span className="text-muted-foreground">Experience</span>
                       <span>{gig.experienceLevel}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Proposals</span>
+                    <span className="text-muted-foreground">Proposals</span>
                     <span>{gig.bidCount}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Location</span>
+                    <span className="text-muted-foreground">Location</span>
                     <span>
                       {gig.isRemote ? "Remote" : gig.city || "On-site"}
                     </span>
                   </div>
                   {gig.deadline && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Deadline</span>
+                      <span className="text-muted-foreground">Deadline</span>
                       <span>{formatDate(gig.deadline)}</span>
                     </div>
                   )}
@@ -351,7 +351,7 @@ export function GigDetailClient({ gig }: GigDetailClientProps) {
                     <div className="font-medium">
                       {gig.poster.displayName}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       {gig.poster.avgRating > 0
                         ? `${gig.poster.avgRating} rating`
                         : "New client"}

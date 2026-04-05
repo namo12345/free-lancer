@@ -74,6 +74,11 @@ const employerItems: SidebarItem[] = [
     icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>,
   },
   {
+    href: "/employer/milestones",
+    label: "Milestones",
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
+  },
+  {
     href: "/employer/invoices",
     label: "Invoices",
     icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" /></svg>,
@@ -110,7 +115,7 @@ export function Sidebar({ role }: SidebarProps) {
   }
 
   return (
-    <aside className="w-64 border-r bg-background min-h-screen p-4 hidden lg:block flex flex-col justify-between">
+    <aside className="w-64 border-r bg-background min-h-screen hidden lg:flex lg:flex-col lg:justify-between p-4">
       <div className="space-y-1">
         {items.map((item) => (
           <Link
@@ -119,7 +124,7 @@ export function Sidebar({ role }: SidebarProps) {
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
               pathname.includes(item.href)
-                ? "bg-brand-50 text-brand-700"
+                ? "bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300"
                 : "text-muted-foreground hover:bg-muted"
             )}
           >
@@ -131,7 +136,7 @@ export function Sidebar({ role }: SidebarProps) {
       <div className="mt-auto pt-4 border-t">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors w-full"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
           Logout

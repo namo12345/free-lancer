@@ -36,8 +36,8 @@ export function useRealtimeMessages(conversationId: string | null) {
     const supabase = createClient();
     const channel = supabase
       .channel(`conversation:${conversationId}`)
-      .on("broadcast", { event: "new_message" }, (payload) => {
-        appendMessage(payload.payload as Message);
+      .on("broadcast", { event: "new_message" }, (payload: { payload: Message }) => {
+        appendMessage(payload.payload);
       })
       .on("broadcast", { event: "typing" }, () => {
         setIsTyping(true);
@@ -83,8 +83,8 @@ export function useRealtimeNotifications(userId: string | null) {
     const supabase = createClient();
     const channel = supabase
       .channel(`notifications:${userId}`)
-      .on("broadcast", { event: "notification" }, (payload) => {
-        setNotifications((prev) => [payload.payload as typeof notifications[0], ...prev]);
+      .on("broadcast", { event: "notification" }, (payload: { payload: typeof notifications[0] }) => {
+        setNotifications((prev) => [payload.payload, ...prev]);
       })
       .subscribe();
 

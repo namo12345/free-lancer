@@ -13,7 +13,7 @@ export default async function EmployerDashboardPage() {
       <>
         <Sidebar role="employer" />
         <main className="flex-1 p-6">
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg font-medium">Unable to load dashboard</p>
             <p className="mt-1">Please sign in to view your dashboard.</p>
           </div>
@@ -65,7 +65,7 @@ export default async function EmployerDashboardPage() {
             <CardHeader><CardTitle>Recent Gigs</CardTitle></CardHeader>
             <CardContent>
               {recentGigs.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <p className="text-sm">No gigs posted yet.</p>
                   <p className="text-sm mt-1">Post a gig to start receiving bids from freelancers.</p>
                 </div>
@@ -96,7 +96,7 @@ export default async function EmployerDashboardPage() {
             <CardHeader><CardTitle>Recent Activity</CardTitle></CardHeader>
             <CardContent>
               {recentActivity.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <p className="text-sm">No recent activity.</p>
                   <p className="text-sm mt-1">Post a gig to start receiving bids from freelancers.</p>
                 </div>
@@ -104,13 +104,13 @@ export default async function EmployerDashboardPage() {
                 <div className="space-y-3">
                   {recentActivity.map((item) => {
                     const colorMap: Record<string, string> = {
-                      bid: "bg-green-500",
-                      invoice: "bg-blue-500",
-                      milestone: "bg-yellow-500",
+                      bid: "bg-brand-500",
+                      invoice: "bg-brand-400",
+                      milestone: "bg-brand-600",
                     };
                     return (
                       <div key={item.id} className="flex items-center gap-3 text-sm">
-                        <div className={`w-2 h-2 ${colorMap[item.type] ?? "bg-gray-400"} rounded-full`} />
+                        <div className={`w-2 h-2 ${colorMap[item.type] ?? "bg-muted-foreground"} rounded-full`} />
                         <span>{item.text}</span>
                         <span className="text-muted-foreground ml-auto">{formatDate(item.time)}</span>
                       </div>

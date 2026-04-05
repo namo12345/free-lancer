@@ -34,7 +34,7 @@ export default async function EmployerGigsPage({
         </div>
 
         {gigs.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg font-medium">No gigs yet</p>
             <p className="mt-1">Post your first gig to get started.</p>
             <Link href="/employer/gigs/new">
@@ -49,7 +49,7 @@ export default async function EmployerGigsPage({
                   <CardContent className="p-6 flex items-center justify-between">
                     <div>
                       <h3 className="font-semibold">{gig.title}</h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         Posted {formatDate(gig.createdAt)} &middot; {gig.bidCount} bids
                       </p>
                     </div>

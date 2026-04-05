@@ -105,7 +105,7 @@ export function ResearchClient() {
               <button
                 key={sq}
                 onClick={() => { setQuery(sq); handleResearch(sq); }}
-                className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:bg-brand-50 hover:border-brand-200 hover:text-brand-700 transition-colors"
+                className="text-xs px-3 py-1.5 rounded-full border border-border text-muted-foreground hover:bg-brand-50 hover:border-brand-200 hover:text-brand-700 transition-colors"
               >
                 {sq}
               </button>
@@ -152,7 +152,7 @@ export function ResearchClient() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-brand-700 mb-1">Quick Answer</p>
-                    <p className="text-sm text-gray-800">{result.quickAnswer}</p>
+                    <p className="text-sm text-foreground">{result.quickAnswer}</p>
                   </div>
                 </div>
               </CardContent>
@@ -168,7 +168,7 @@ export function ResearchClient() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed">
+              <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap leading-relaxed">
                 {result.report}
               </div>
             </CardContent>
@@ -183,8 +183,8 @@ export function ResearchClient() {
               <CardContent>
                 <div className="space-y-4">
                   {result.sources.map((source, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                      <div className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-500 shrink-0 mt-0.5">
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="w-6 h-6 rounded bg-muted flex items-center justify-center text-xs font-medium text-muted-foreground shrink-0 mt-0.5">
                         {idx + 1}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -196,9 +196,9 @@ export function ResearchClient() {
                         >
                           {source.title}
                         </a>
-                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{source.snippet}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{source.snippet}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-gray-400">{new URL(source.url).hostname}</span>
+                          <span className="text-xs text-muted-foreground">{new URL(source.url).hostname}</span>
                           {source.score > 0.8 && <Badge variant="success" className="text-xs">High relevance</Badge>}
                         </div>
                       </div>
