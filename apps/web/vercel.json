@@ -1,0 +1,5 @@
+{
+  "installCommand": "cd ../.. && pnpm install",
+  "buildCommand": "cd ../.. && pnpm --filter @hiresense/db generate && pnpm --filter @hiresense/web build",
+  "outputDirectory": ".next"
+}

@@ -1,6 +1,3 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && pnpm install",
-  "buildCommand": "cd ../.. && pnpm --filter @hiresense/db generate && pnpm --filter @hiresense/web build",
-  "outputDirectory": ".next"
+  "$schema": "https://openapi.vercel.sh/vercel.json"
 }
