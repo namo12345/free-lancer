@@ -14,19 +14,17 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig = {
   transpilePackages: ["@hiresense/ui", "@hiresense/shared", "@hiresense/db"],
 
-  // Don't bundle Prisma — keep it as external so the engine binary is loaded at runtime
+  // Keep Prisma as external so the engine binary is loaded at runtime (not bundled by webpack)
   serverExternalPackages: ["@prisma/client", "prisma"],
 
-  // Set tracing root to monorepo root so pnpm node_modules are reachable
+  // Set tracing root to monorepo root so cross-package files are reachable
   outputFileTracingRoot: monorepoRoot,
 
-  // Paths are relative to outputFileTracingRoot (monorepo root)
-  // apps/web/.prisma/client is where `prisma generate` outputs the engine binary
+  // Include the Prisma generated client (with engine binary) in the serverless function bundle
+  // Path is relative to outputFileTracingRoot (monorepo root)
   outputFileTracingIncludes: {
     "/**": [
-      "apps/web/.prisma/client/**",
-      "node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/**",
-      "node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client/**",
+      "packages/db/generated/client/**",
     ],
   },
 };

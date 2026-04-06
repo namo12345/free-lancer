@@ -48,6 +48,7 @@ coverage/
 
 # Prisma
 packages/db/prisma/migrations/
+packages/db/generated/
 
 # Misc
 *.tsbuildinfo
