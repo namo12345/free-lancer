@@ -20,11 +20,12 @@ const nextConfig = {
   // Set tracing root to monorepo root so cross-package files are reachable
   outputFileTracingRoot: monorepoRoot,
 
-  // Include the Prisma generated client (with engine binary) in the serverless function bundle
-  // Path is relative to outputFileTracingRoot (monorepo root)
+  // Include the Prisma generated client (with engine binary) in the serverless function bundle.
+  // Engine binary must be at apps/web/generated/client/ because Vercel functions run with
+  // CWD=/var/task/apps/web and Prisma searches process.cwd()+'/generated/client' at runtime.
   outputFileTracingIncludes: {
     "/**": [
-      "packages/db/generated/client/**",
+      "apps/web/generated/client/**",
     ],
   },
 };

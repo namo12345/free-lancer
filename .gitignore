@@ -48,6 +48,7 @@ coverage/
 
 # Prisma
 packages/db/prisma/migrations/
+apps/web/generated/
 packages/db/generated/
 
 # Misc
