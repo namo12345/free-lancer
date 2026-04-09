@@ -18,8 +18,36 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Google Translate – hides the toolbar, exposes the JS API for auto-translate */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          .goog-te-banner-frame, .goog-te-balloon-frame { display: none !important; }
+          .skiptranslate { display: none !important; }
+          #google_translate_element { display: none !important; }
+          body { top: 0 !important; }
+          .goog-te-gadget { display: none !important; }
+        `}} />
+      </head>
       <body className={inter.className}>
         <ThemeProvider>{children}</ThemeProvider>
+
+        {/* Google Translate init */}
+        <div id="google_translate_element" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                  pageLanguage: 'en',
+                  includedLanguages: 'hi,ta,te,bn',
+                  autoDisplay: false
+                }, 'google_translate_element');
+              }
+            `,
+          }}
+        />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" />
       </body>
     </html>
   );

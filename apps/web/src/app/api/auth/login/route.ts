@@ -1,28 +1,39 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@hiresense/db";
 
-const STATIC_USER_ID = "static-admin-user";
-const VALID_USERNAME = "admin";
-const VALID_PASSWORD = "admin123";
+const USERS = {
+  freelancer: {
+    password: "freelancer123",
+    supabaseId: "static-freelancer-user",
+    email: "freelancer@hiresense.in",
+    role: "FREELANCER" as const,
+    displayName: "Arjun Sharma",
+  },
+  employer: {
+    password: "employer123",
+    supabaseId: "static-employer-user",
+    email: "employer@hiresense.in",
+    role: "EMPLOYER" as const,
+    displayName: "TechVenture Solutions",
+  },
+};
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { username, password, role } = body;
+  const { username, password } = body;
 
-  if (username !== VALID_USERNAME || password !== VALID_PASSWORD) {
+  const user = USERS[username as keyof typeof USERS];
+  if (!user || user.password !== password) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 
-  const userRole = role === "EMPLOYER" ? "EMPLOYER" : "FREELANCER";
-
-  // Ensure user exists in the database
   const dbUser = await prisma.user.upsert({
-    where: { supabaseId: STATIC_USER_ID },
-    update: { role: userRole },
+    where: { supabaseId: user.supabaseId },
+    update: { role: user.role },
     create: {
-      supabaseId: STATIC_USER_ID,
-      email: "admin@hiresense.in",
-      role: userRole,
+      supabaseId: user.supabaseId,
+      email: user.email,
+      role: user.role,
     },
     include: {
       freelancerProfile: true,
@@ -30,25 +41,24 @@ export async function POST(req: Request) {
     },
   });
 
-  // Create profile if missing
-  if (userRole === "FREELANCER" && !dbUser.freelancerProfile) {
+  if (user.role === "FREELANCER" && !dbUser.freelancerProfile) {
     await prisma.freelancerProfile.create({
-      data: { userId: dbUser.id, displayName: "Admin" },
+      data: { userId: dbUser.id, displayName: user.displayName },
     });
   }
-  if (userRole === "EMPLOYER" && !dbUser.employerProfile) {
+  if (user.role === "EMPLOYER" && !dbUser.employerProfile) {
     await prisma.employerProfile.create({
-      data: { userId: dbUser.id, displayName: "Admin" },
+      data: { userId: dbUser.id, displayName: user.displayName },
     });
   }
 
-  const response = NextResponse.json({ success: true, role: userRole });
-  response.cookies.set("hiresense-auth", "admin", {
+  const response = NextResponse.json({ success: true, role: user.role });
+  response.cookies.set("hiresense-auth", username, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    maxAge: 60 * 60 * 24 * 30,
   });
 
   return response;

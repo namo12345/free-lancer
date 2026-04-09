@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function updateSession(request: NextRequest) {
   const response = NextResponse.next({ request });
   const authCookie = request.cookies.get("hiresense-auth");
-  const isAuthenticated = authCookie?.value === "admin";
+  const isAuthenticated = authCookie?.value === "freelancer" || authCookie?.value === "employer";
 
   // Redirect unauthenticated users trying to access dashboard
   const pathname = request.nextUrl.pathname;
