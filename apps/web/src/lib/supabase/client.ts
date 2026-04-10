@@ -1,25 +1,20 @@
-/* Static auth — no Supabase browser client needed.
-   Kept for import compatibility with hooks/use-realtime.ts */
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-function noop() {}
-
-const noopChannel = {
-  on: () => noopChannel,
-  subscribe: () => noopChannel,
-  send: noop,
-};
-
+/**
+ * Browser-side Supabase client.
+ * Used ONLY for Realtime channels (broadcast messages, notifications).
+ * Auth is handled statically via cookie — we do NOT use Supabase auth here.
+ */
 export function createClient() {
-  return {
-    auth: {
-      getUser: async () => ({ data: { user: null }, error: null }),
-      signInWithPassword: async () => ({ error: { message: "Use static login" } }),
-      signInWithOAuth: async () => ({ error: { message: "Use static login" } }),
-      signUp: async () => ({ error: { message: "Use static login" } }),
-      signOut: async () => ({ error: null }),
-    },
-    channel: () => noopChannel,
-    removeChannel: noop,
-  // eslint-disable-next-line
-  } as any;
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    }
+  );
 }

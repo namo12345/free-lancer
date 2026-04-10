@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 
 const LOCALE_TO_LANG: Record<string, string> = {
@@ -17,36 +17,54 @@ const LOCALE_TO_LANG: Record<string, string> = {
 export function GoogleTranslateSync() {
   const params = useParams();
   const locale = (params?.locale as string) || "en";
+  const prevLocaleRef = useRef<string>(locale);
 
   useEffect(() => {
     const targetLang = LOCALE_TO_LANG[locale];
-
-    // Set the googtrans cookie that Google Translate reads on load
+    const prevLang = LOCALE_TO_LANG[prevLocaleRef.current];
     const domain = window.location.hostname;
+
+    // Update ref before any early returns
+    prevLocaleRef.current = locale;
+
     if (targetLang) {
+      // Non-English: set cookie and apply translation
       const val = `/en/${targetLang}`;
       document.cookie = `googtrans=${val};path=/;domain=${domain}`;
       document.cookie = `googtrans=${val};path=/;domain=.${domain}`;
+
+      const timer = setTimeout(() => {
+        // eslint-disable-next-line
+        const gtCombo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+        if (gtCombo) {
+          gtCombo.value = targetLang;
+          gtCombo.dispatchEvent(new Event("change"));
+        }
+      }, 300);
+      return () => clearTimeout(timer);
     } else {
-      // English – clear translation
+      // English: clear cookie
       const past = "Thu, 01 Jan 1970 00:00:00 GMT";
       document.cookie = `googtrans=;path=/;expires=${past};domain=${domain}`;
       document.cookie = `googtrans=;path=/;expires=${past};domain=.${domain}`;
-    }
 
-    // If the widget is already initialised, switch language programmatically
-    function applyTranslation() {
-      // eslint-disable-next-line
-      const gtCombo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-      if (gtCombo) {
-        gtCombo.value = targetLang || "en";
-        gtCombo.dispatchEvent(new Event("change"));
+      // If we were on a translated page, reload to restore English content
+      if (prevLang) {
+        window.location.reload();
+        return;
       }
-    }
 
-    // Widget may take a moment to inject itself into the DOM
-    const timer = setTimeout(applyTranslation, 800);
-    return () => clearTimeout(timer);
+      // Otherwise try to reset the combo box if it exists
+      const timer = setTimeout(() => {
+        // eslint-disable-next-line
+        const gtCombo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+        if (gtCombo && gtCombo.value !== "" && gtCombo.value !== "en") {
+          gtCombo.value = "en";
+          gtCombo.dispatchEvent(new Event("change"));
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
   }, [locale]);
 
   return null;

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
+import { FileUpload } from "@/components/ui/file-upload";
 import { useRealtimeMessages } from "@/hooks/use-realtime";
 import {
   getMessages,
@@ -27,6 +28,7 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
     sendTyping,
   } = useRealtimeMessages(conversationId);
   const [input, setInput] = useState("");
+  const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sendError, setSendError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,7 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() && !attachmentUrl) return;
 
     setSendError(null);
 
@@ -81,11 +83,13 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
       const savedMessage = await persistMessage(
         conversationId,
         otherUser.id,
-        input.trim()
+        input.trim() || "📎 Attachment",
+        attachmentUrl ?? undefined
       );
       appendMessage(savedMessage);
       broadcastMessage(savedMessage);
       setInput("");
+      setAttachmentUrl(null);
     } catch (error) {
       setSendError(
         error instanceof Error ? error.message : "Failed to send message."
@@ -142,15 +146,28 @@ export function ChatWindow({ conversationId, currentUserId, otherUser }: ChatWin
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Attachment preview */}
+      {attachmentUrl && (
+        <div className="px-3 py-1 border-t flex items-center gap-2 text-xs text-muted-foreground">
+          <span>📎 Attachment ready</span>
+          <button type="button" onClick={() => setAttachmentUrl(null)} className="text-destructive hover:underline">Remove</button>
+        </div>
+      )}
+
       {/* Input */}
       <form onSubmit={handleSend} className="p-3 border-t flex gap-2">
+        <FileUpload
+          onUpload={(url) => setAttachmentUrl(url)}
+          label="📎"
+          className="shrink-0"
+        />
         <Input
           value={input}
           onChange={(e) => handleInputChange(e.target.value)}
           placeholder="Type a message..."
           className="flex-1"
         />
-        <Button type="submit" size="icon" disabled={!input.trim()}>
+        <Button type="submit" size="icon" disabled={!input.trim() && !attachmentUrl}>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
         </Button>
       </form>

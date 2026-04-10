@@ -51,6 +51,11 @@ const freelancerItems: SidebarItem[] = [
     icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>,
   },
   {
+    href: "/freelancer/dna",
+    label: "FreelancerDNA",
+    icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3H7a2 2 0 00-2 2v1M9 3h6M9 3V1m6 2h2a2 2 0 012 2v1M15 3V1M3 10h18M3 14h18M7 21H5a2 2 0 01-2-2v-1m4 3h10m-10 0V23m10-2h2a2 2 0 002-2v-1m-2 3V23" /></svg>,
+  },
+  {
     href: "/freelancer/profile",
     label: "Profile",
     icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
